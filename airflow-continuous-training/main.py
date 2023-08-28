@@ -16,26 +16,33 @@ def main():
     data = eval(data.replace(", tzinfo=Timezone('UTC')", ""))
     X = np.array([[item[1], item[2]] for item in data])
     y = np.array([CLASSES.index(item[3]) for item in data])
-    clf = svm.SVC(kernel="linear")
+    clf = svm.SVC(kernel="rbf", decision_function_shape="ovr")
     clf.fit(X, y)
-    plt.scatter(X[:, 0], X[:, 1], c=y, marker="o", edgecolors="k")
+
+    plt.figure(figsize=(10, 10))
+    plt.scatter(X[:, 0], X[:, 1], c=y, marker="o", edgecolors="k", cmap=plt.cm.jet)
     ax = plt.gca()
-    xlim = ax.get_xlim()
-    ylim = ax.get_ylim()
-    xx = np.linspace(xlim[0], xlim[1])
-    yy = np.linspace(ylim[0], ylim[1])
+
+    xlim = (-5, 5)
+    ylim = (-5, 5)
+
+    xx = np.linspace(xlim[0], xlim[1], 500)
+    yy = np.linspace(ylim[0], ylim[1], 500)
+
     YY, XX = np.meshgrid(yy, xx)
     xy = np.vstack([XX.ravel(), YY.ravel()]).T
     Z = clf.decision_function(xy).reshape(XX.shape)
+
     ax.contour(
         XX,
         YY,
         Z,
         colors="k",
-        levels=[-1, 0, 1],
+        levels=np.arange(len(CLASSES) - 1) + 0.5,
         alpha=0.5,
         linestyles=["--", "-", "--"],
     )
+
     ax.scatter(
         clf.support_vectors_[:, 0],
         clf.support_vectors_[:, 1],
@@ -43,7 +50,11 @@ def main():
         facecolors="none",
         edgecolors="k",
     )
+
+    plt.xlim(xlim)
+    plt.ylim(ylim)
     plt.savefig("result.png", bbox_inches="tight")
+
     with open("result.png", "rb") as f:
         files = {"file": ("result.png", f, "image/png")}
         requests.post(WEBHOOK, files=files)
