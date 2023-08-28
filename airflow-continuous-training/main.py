@@ -1,8 +1,6 @@
-import ast
 import datetime
 import os
 import sys
-from datetime import timezone as Timezone
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,11 +13,7 @@ WEBHOOK = os.environ.get("WEBHOOK")
 def main():
     data = sys.argv[1]
     print(type(data))
-    data = ast.literal_eval(
-        data.replace("datetime.datetime", "datetime").replace(
-            "Timezone('UTC')", "Timezone.utc"
-        )
-    )
+    data = eval(data.replace(", tzinfo=Timezone('UTC')", ""))
     for d in data:
         print(d)
     print("=" * 100)
