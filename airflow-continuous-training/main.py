@@ -1,3 +1,4 @@
+import ast
 import datetime
 import os
 import sys
@@ -13,7 +14,12 @@ WEBHOOK = os.environ.get("WEBHOOK")
 
 def main():
     data = sys.argv[1]
-    data = eval(data.replace("datetime.datetime", "datetime").replace("Timezone('UTC')", "Timezone.utc"))
+    print(type(data))
+    data = ast.literal_eval(
+        data.replace("datetime.datetime", "datetime").replace(
+            "Timezone('UTC')", "Timezone.utc"
+        )
+    )
     for d in data:
         print(d)
     print("=" * 100)
