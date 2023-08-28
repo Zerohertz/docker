@@ -32,17 +32,19 @@ def main():
 
     YY, XX = np.meshgrid(yy, xx)
     xy = np.vstack([XX.ravel(), YY.ravel()]).T
-    Z = clf.decision_function(xy).reshape(XX.shape)
+    Z = clf.decision_function(xy)
+    n_classes = len(CLASSES)
 
-    ax.contour(
-        XX,
-        YY,
-        Z,
-        colors="k",
-        levels=np.arange(len(CLASSES) - 1) + 0.5,
-        alpha=0.5,
-        linestyles=["--", "-", "--"],
-    )
+    for i in range(n_classes):
+        ax.contour(
+            XX,
+            YY,
+            Z[:, i].reshape(XX.shape),
+            colors="k",
+            levels=[0],
+            alpha=0.5,
+            linestyles=["-"]
+        )
 
     ax.scatter(
         clf.support_vectors_[:, 0],
