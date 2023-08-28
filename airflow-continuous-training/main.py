@@ -11,6 +11,9 @@ WEBHOOK = os.environ.get("WEBHOOK")
 
 def main():
     data = sys.argv[1]
+    for d in data:
+        print(d)
+    print("="*100)
     X = np.array([[item[1], item[2]] for item in data])
     y = np.array([item[3] for item in data])
     clf = svm.SVC(kernel="linear")
