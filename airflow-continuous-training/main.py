@@ -9,6 +9,7 @@ from sklearn import svm
 
 WEBHOOK = os.environ.get("WEBHOOK")
 CLASSES = eval(os.environ.get("CLASSES"))
+TIME = eval(os.environ.get("TIME"))
 
 
 def main():
@@ -53,6 +54,7 @@ def main():
 
     plt.xlim(xlim)
     plt.ylim(ylim)
+    plt.title(TIME)
     plt.savefig("result.png", bbox_inches="tight")
 
     with open("result.png", "rb") as f:
