@@ -8,7 +8,7 @@ import requests
 from sklearn import svm
 
 WEBHOOK = os.environ.get("WEBHOOK")
-CLASSES = os.environ.get("CLASSES")
+CLASSES = eval(os.environ.get("CLASSES"))
 
 
 def main():
