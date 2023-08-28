@@ -4,6 +4,7 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
+import psycopg2
 import requests
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
@@ -11,10 +12,31 @@ from sklearn.tree import DecisionTreeClassifier
 WEBHOOK = os.environ.get("WEBHOOK")
 CLASSES = eval(os.environ.get("CLASSES"))
 TIME = os.environ.get("TIME")
+QUERY = os.environ.get("QUERY")
+user = os.environ.get("user")
+password = os.environ.get("password")
+host = os.environ.get("host")
+port = os.environ.get("port")
+database = os.environ.get("database")
+
+
+def execute_query(query):
+    connection = psycopg2.connect(
+        user=user, password=password, host=host, port=port, database=database
+    )
+
+    cursor = connection.cursor()
+    cursor.execute(query)
+    records = cursor.fetchall()
+    print("Fetched records:", records)
+    print("=" * 100)
+    cursor.close()
+    connection.close()
+    return records
 
 
 def main():
-    data = sys.argv[1]
+    data = execute_query(QUERY)
     data = eval(data.replace(", tzinfo=Timezone('UTC')", ""))
     X = np.array([[item[1], item[2]] for item in data])
     y = np.array([CLASSES.index(item[3]) for item in data])
