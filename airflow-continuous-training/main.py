@@ -51,7 +51,7 @@ def main():
             [0],
             marker="o",
             color="w",
-            label=CLASSES[i],
+            label=f"CLASS {CLASSES[i]}",
             markersize=10,
             markerfacecolor=colors[i],
         )
