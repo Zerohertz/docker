@@ -62,6 +62,7 @@ def main():
     plt.xlim(xlim)
     plt.ylim(ylim)
     plt.title(TIME)
+    plt.grid()
     plt.savefig("result.png", bbox_inches="tight")
 
     with open("result.png", "rb") as f:
