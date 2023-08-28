@@ -6,4 +6,4 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-CMD ["python", "main.py"]
+ENTRYPOINT ["python", "main.py"]
