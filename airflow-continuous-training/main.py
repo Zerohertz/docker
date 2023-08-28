@@ -5,23 +5,23 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-from sklearn import svm
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.preprocessing import LabelEncoder
 
 WEBHOOK = os.environ.get("WEBHOOK")
 CLASSES = eval(os.environ.get("CLASSES"))
 TIME = os.environ.get("TIME")
-
 
 def main():
     data = sys.argv[1]
     data = eval(data.replace(", tzinfo=Timezone('UTC')", ""))
     X = np.array([[item[1], item[2]] for item in data])
     y = np.array([CLASSES.index(item[3]) for item in data])
-    clf = svm.SVC(kernel="rbf", decision_function_shape="ovr")
+
+    clf = DecisionTreeClassifier()
     clf.fit(X, y)
 
     plt.figure(figsize=(10, 10))
-    plt.scatter(X[:, 0], X[:, 1], c=y, marker="o", edgecolors="k", cmap=plt.cm.jet)
     ax = plt.gca()
 
     xlim = (-7, 7)
@@ -32,40 +32,23 @@ def main():
 
     YY, XX = np.meshgrid(yy, xx)
     xy = np.vstack([XX.ravel(), YY.ravel()]).T
-    Z = clf.decision_function(xy)
+    Z = clf.predict(xy)
+
     n_classes = len(CLASSES)
-
     colors = plt.cm.jet(np.linspace(0, 1, n_classes))
-    linestyles = ['-', '--', '-.', ':'] * (n_classes // 4 + 1)
-    linewidths = [2] * n_classes
 
-    for i in range(n_classes):
-        ax.contour(
-            XX,
-            YY,
-            Z[:, i].reshape(XX.shape),
-            colors=[colors[i]],
-            levels=[0],
-            alpha=0.5,
-            linestyles=[linestyles[i]],
-            linewidths=linewidths[i]
-        )
+    contour = ax.contourf(XX, YY, Z.reshape(XX.shape), levels=n_classes-1, colors=colors, alpha=0.5)
+    plt.colorbar(contour)
 
-    ax.scatter(
-        clf.support_vectors_[:, 0],
-        clf.support_vectors_[:, 1],
-        s=100,
-        facecolors="none",
-        edgecolors="k",
-    )
-
+    scatter = ax.scatter(X[:, 0], X[:, 1], c=y, marker="o", edgecolors="k", cmap=plt.cm.jet)
+    
     plt.xlim(xlim)
     plt.ylim(ylim)
     plt.title(TIME)
     plt.savefig("result.png", bbox_inches="tight")
 
     with open("result.png", "rb") as f:
-        files = {"file": ("result.png", f, "image/png")}
+        files = {"file": (f"{TIME}.png", f, "image/png")}
         requests.post(WEBHOOK, files=files)
 
 
