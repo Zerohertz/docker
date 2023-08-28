@@ -58,5 +58,5 @@ jobs:
     - name: Notify Discord
       run: |
         curl -X POST -H "Content-Type: application/json" -d '{
-          "content": ":tada: GitHub Actions: Build ${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}:latest Completed."
+          "content": ":tada: [GitHub Actions] Build ${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}:latest Completed."
         }' ${{ secrets.DISCORD_WEBHOOK_URL }}
