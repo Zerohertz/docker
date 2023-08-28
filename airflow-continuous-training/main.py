@@ -1,5 +1,7 @@
+import datetime
 import os
 import sys
+from datetime import timezone as Timezone
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,9 +13,10 @@ WEBHOOK = os.environ.get("WEBHOOK")
 
 def main():
     data = sys.argv[1]
+    data = eval(data.replace("datetime.datetime", "datetime").replace("Timezone('UTC')", "Timezone.utc"))
     for d in data:
         print(d)
-    print("="*100)
+    print("=" * 100)
     X = np.array([[item[1], item[2]] for item in data])
     y = np.array([item[3] for item in data])
     clf = svm.SVC(kernel="linear")
