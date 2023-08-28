@@ -8,17 +8,14 @@ import requests
 from sklearn import svm
 
 WEBHOOK = os.environ.get("WEBHOOK")
+CLASSES = os.environ.get("CLASSES")
 
 
 def main():
     data = sys.argv[1]
-    print(type(data))
     data = eval(data.replace(", tzinfo=Timezone('UTC')", ""))
-    for d in data:
-        print(d)
-    print("=" * 100)
     X = np.array([[item[1], item[2]] for item in data])
-    y = np.array([item[3] for item in data])
+    y = np.array([CLASSES.index(item[3]) for item in data])
     clf = svm.SVC(kernel="linear")
     clf.fit(X, y)
     plt.scatter(X[:, 0], X[:, 1], c=y, marker="o", edgecolors="k")
