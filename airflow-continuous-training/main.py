@@ -1,6 +1,4 @@
-import datetime
 import os
-import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,7 +29,6 @@ def execute_query(query):
 
 def main():
     data = execute_query(QUERY)
-    # data = eval(data.replace(", tzinfo=Timezone('UTC')", ""))
     X = np.array([[item[1], item[2]] for item in data])
     y = np.array([CLASSES.index(item[3]) for item in data])
 
