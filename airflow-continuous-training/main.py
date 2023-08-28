@@ -9,7 +9,7 @@ from sklearn import svm
 
 WEBHOOK = os.environ.get("WEBHOOK")
 CLASSES = eval(os.environ.get("CLASSES"))
-TIME = eval(os.environ.get("TIME"))
+TIME = os.environ.get("TIME")
 
 
 def main():
