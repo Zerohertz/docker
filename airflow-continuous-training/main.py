@@ -35,15 +35,20 @@ def main():
     Z = clf.decision_function(xy)
     n_classes = len(CLASSES)
 
+    colors = plt.cm.jet(np.linspace(0, 1, n_classes))
+    linestyles = ['-', '--', '-.', ':'] * (n_classes // 4 + 1)
+    linewidths = [2] * n_classes
+
     for i in range(n_classes):
         ax.contour(
             XX,
             YY,
             Z[:, i].reshape(XX.shape),
-            colors="k",
+            colors=[colors[i]],
             levels=[0],
             alpha=0.5,
-            linestyles=["-"]
+            linestyles=[linestyles[i]],
+            linewidths=linewidths[i]
         )
 
     ax.scatter(
