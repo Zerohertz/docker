@@ -24,8 +24,8 @@ def main():
     plt.scatter(X[:, 0], X[:, 1], c=y, marker="o", edgecolors="k", cmap=plt.cm.jet)
     ax = plt.gca()
 
-    xlim = (-5, 5)
-    ylim = (-5, 5)
+    xlim = (-7, 7)
+    ylim = (-7, 7)
 
     xx = np.linspace(xlim[0], xlim[1], 500)
     yy = np.linspace(ylim[0], ylim[1], 500)
