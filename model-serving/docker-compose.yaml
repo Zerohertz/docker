@@ -1,0 +1,40 @@
+version: "3.5"
+
+services:
+  tritoninferenceserver:
+    container_name: model-serving-server
+    build:
+      context: .
+      dockerfile: ./src/server/Dockerfile
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=${GPU_NO}
+    volumes:
+      - ${PWD}/src/server/model_repository:/models
+    shm_size: 8g
+    command: tritonserver --model-repository=/models --strict-model-config=false --log-verbose=1 --backend-config=python,grpc-timeout-milliseconds=50000
+
+  fastapi:
+    container_name: model-serving-client
+    build:
+      context: .
+      dockerfile: ./src/client/Dockerfile
+    volumes:
+      - ${PWD}/inputs:/app/inputs
+      - ${PWD}/outputs:/app/outputs
+    ports:
+      - "${FASTAPI_PORT}:80"
+
+  gradio:
+    container_name: model-serving-gradio
+    build:
+      context: .
+      dockerfile: ./src/gradio/Dockerfile
+    volumes:
+      - ${PWD}/inputs:/app/inputs
+      - ${PWD}/outputs:/app/outputs
+    ports:
+      - "${GRADIO_PORT}:7860"
+
+networks:
+  default:
+    name: model-serving-network

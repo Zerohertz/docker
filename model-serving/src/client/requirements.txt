@@ -1,0 +1,8 @@
+numpy
+opencv-python
+protobuf
+google
+grpcio
+tritonclient
+packaging
+fastapi
