@@ -4,7 +4,6 @@ import os
 import requests
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
-from oauth2client.service_account import ServiceAccountCredentials
 
 KEY = json.loads(os.environ.get("KEY"))
 PROPERTY_ID = os.environ.get("PROPERTY_ID")
