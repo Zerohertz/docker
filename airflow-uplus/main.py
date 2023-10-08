@@ -48,7 +48,7 @@ def id_select(browser, element, key):
 def get_info(browser):
     element = browser.find_element(
         "xpath",
-        "/html/body/div[5]/div[1]/div/div/div/div/div/div/div/div[1]/div/p",
+        "/html/body/div[5]/div[1]/div/div/div/div/div/div/div/div[1]/div/p",  # (이번달 납부하실 금액은 **,***원입니다.) | (납부할 요금이 없습니다.)
     )
     return element.text
 
@@ -56,7 +56,7 @@ def get_info(browser):
 def get_price(browser):
     element = browser.find_element(
         "xpath",
-        "/html/body/div[6]/div[1]/div/div/div/div/div[1]/div/div/div[1]/div/p/strong",
+        "/html/body/div[5]/div[1]/div/div/div/div/div[1]/div/div/div[1]/div/p/strong",  # 이번달 납부하실 금액은 (**,***)원입니다.
     )
     return int(element.text[:-1].replace(",", ""))
 
