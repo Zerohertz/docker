@@ -151,7 +151,7 @@ if __name__ == "__main__":
         info(browser, PRICE)
 
         # 결제
-        xpath_click(browser, "/html/body/div[6]/div[1]/div/div/footer/button[2]")
+        xpath_click(browser, "/html/body/div[5]/div[1]/div/div/footer/button[2]")
         send_discord_message(WEBHOOK, f":bell: [결제 :o:] 결제 완료!:\t{PRICE}원")
         send_discord_message(
             WEBHOOK, f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE)}원"
