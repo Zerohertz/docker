@@ -47,7 +47,8 @@ def id_select(browser, element, key):
 
 def get_info(browser):
     element = browser.find_element(
-        "xpath", "/html/body/div[6]/div[1]/div/div/div/div/div/div/div/div[1]/div/p",
+        "xpath",
+        "/html/body/div[5]/div[1]/div/div/div/div/div/div/div/div[1]/div/p",
     )
     return element.text
 
