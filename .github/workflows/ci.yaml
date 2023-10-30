@@ -5,9 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "airflow-ga4/**"
-      - "airflow-uplus/**"
-      - "airflow-continuous-training/**"
+      - "airflow-*/**"
 
 jobs:
   detect-changes:
@@ -23,7 +21,7 @@ jobs:
         id: set-matrix
         run: |
           CHANGED_DIRS=()
-          for path in "airflow-ga4" "airflow-uplus" "airflow-continuous-training"; do
+          for path in airflow-*; do
             if git diff --name-only HEAD^ HEAD | grep -qE "^$path/"; then
               CHANGED_DIRS+=("$path")
             fi
