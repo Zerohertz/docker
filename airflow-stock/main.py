@@ -6,8 +6,7 @@ import zerohertzLib as zz
 from prettytable import PrettyTable
 from selenium import webdriver
 
-# DISCORD WEBHOOK
-WEBHOOK = os.environ.get("WEBHOOK")
+SLACK = os.environ.get("SLACK")
 
 
 def target_data(data):
@@ -32,8 +31,8 @@ def get_price(browser, name):
     return stock_name, price
 
 
-def main(discord, browser, target):
-    discord.message("# :chart_with_upwards_trend: STOCK")
+def main(slack, browser, target):
+    slack.message("> :chart_with_upwards_trend: STOCK")
     table = PrettyTable()
     table.field_names = [
         "NAME",
@@ -46,7 +45,7 @@ def main(discord, browser, target):
     for idx, tar in target.iterrows():
         stock_name, price = get_price(browser, tar["Name"])
         if tar["Name"] != stock_name:
-            discord.message(
+            slack.message(
                 f"Index: {idx}\nstock_name: {stock_name}\ntar['Name']: {tar['Name']}"
             )
         total = (price - tar["Buy"]) * tar["Quantity"]
@@ -62,13 +61,15 @@ def main(discord, browser, target):
         TOTAL_BUY += tar["Buy"] * tar["Quantity"]
         TOTAL_EARN += total
     table.add_row(["TOTAL", f"{TOTAL_BUY:,.0f}", "-", "-", f"{TOTAL_EARN:,.0f}"])
-    discord.message(str(table), codeblock=True)
+    slack.message(str(table), codeblock=True)
 
 
 if __name__ == "__main__":
     df = pd.read_excel("data/Stock.xlsx")
     target = target_data(df)
-    Discord = zz.api.Discord(WEBHOOK)
+    slack = zz.api.SlackBot(
+        SLACK, "zerohertz", name="Stock", icon_emoji="chart_with_upwards_trend"
+    )
     try:
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
@@ -79,8 +80,8 @@ if __name__ == "__main__":
             "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36"
         )
         browser = webdriver.Chrome(options)
-        main(Discord, browser, target)
+        main(slack, browser, target)
 
     except Exception as e:
-        Discord.message(":warning:" * 10 + "ERROR!!!" + ":warning:" * 10)
-        Discord.message(str(e), codeblock=True)
+        slack.message(":warning:" * 10 + "ERROR!!!" + ":warning:" * 10)
+        slack.message(str(e), codeblock=True)
