@@ -60,7 +60,7 @@ jobs:
           -H "Content-type: application/json" \
           -d '{
                   "channel": "zerohertz",
-                  "text": ":tada: [GitHub Actions] Build [${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}:latest](https://hub.docker.com/repository/docker/${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}/general) Completed.",
+                  "text": ":tada: [GitHub Actions] Build <https://hub.docker.com/repository/docker/${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}/general|${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}:latest> Completed.",
                   "username": "GitHub",
                   "icon_url": "https://github-production-user-asset-6210df.s3.amazonaws.com/42334717/286302856-85c52548-7217-4412-a5cb-a066f588fc13.png",
               }'
