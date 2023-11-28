@@ -1,13 +1,12 @@
-import json
 import os
 import time
 
-import requests
+import zerohertzLib as zz
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 
-# DISCORD WEBHOOK
-WEBHOOK = os.environ.get("WEBHOOK")
+# Slack Bot Token
+SLACK = os.environ.get("SLACK")
 # Login ID
 USER_ID = os.environ.get("USER_ID")
 # Login Password
@@ -102,14 +101,8 @@ def info(browser, PRICE):
     price_send(browser, PRICE)
 
 
-def send_discord_message(webhook_url, content):
-    data = {"content": content}
-    headers = {"Content-Type": "application/json"}
-    response = requests.post(webhook_url, data=json.dumps(data), headers=headers)
-    return response
-
-
 if __name__ == "__main__":
+    slack = zz.api.SlackBot(SLACK, "zerohertz", name="U+", icon_emoji="iphone")
     try:
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
@@ -133,13 +126,13 @@ if __name__ == "__main__":
         # 결제 잔액 확인
         tmp = get_info(browser)
         if "납부할 요금이 없습니다." in tmp:
-            send_discord_message(WEBHOOK, f":bell: [결제 :x:] {tmp}")
+            slack.message(f":bell: [결제 :x:] {tmp}")
             exit()
         tmp = get_price(browser)
 
         # 결제 가격
         if tmp == 0 or tmp == 5999:
-            send_discord_message(WEBHOOK, f":no_bell: [결제 :x:] 자동결제 금액:\t{tmp}원")
+            slack.message(f":no_bell: [결제 :x:] 자동결제 금액:\t{tmp}원")
             exit()
         elif tmp > 5999 + 5999:
             PRICE = "5999"
@@ -147,18 +140,15 @@ if __name__ == "__main__":
             PRICE = str(tmp - 5999)
 
         # 결제 정보 입력
-        send_discord_message(WEBHOOK, f":bell: [결제 :o:] 결제 예정 금액:\t{PRICE}원")
+        slack.message(f":bell: [결제 :o:] 결제 예정 금액:\t{PRICE}원")
         info(browser, PRICE)
 
         # 결제
         xpath_click(browser, "/html/body/div[5]/div[1]/div/div/footer/button[2]")
-        send_discord_message(WEBHOOK, f":bell: [결제 :o:] 결제 완료!:\t{PRICE}원")
-        send_discord_message(
-            WEBHOOK, f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE)}원"
-        )
+        slack.message(f":bell: [결제 :o:] 결제 완료!:\t{PRICE}원")
+        slack.message(f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE)}원")
     except Exception as e:
-        send_discord_message(
-            WEBHOOK,
+        slack.message(
             ":warning:" * 10
             + "ERROR!!!"
             + ":warning:" * 10
