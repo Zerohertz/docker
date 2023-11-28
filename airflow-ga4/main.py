@@ -63,20 +63,12 @@ def get_message(title, response):
     return messages
 
 
-def send_discord_message(webhook_url, contents):
-    headers = {"Content-Type": "application/json"}
-    for content in contents:
-        data = {"content": content}
-        response = requests.post(webhook_url, data=json.dumps(data), headers=headers)
-        time.sleep(1)
-    return response
-
-
 def main(tar, slack):
     for t, tit in tar.items():
         response = get_data(t)
-        message = get_message(tit, response)
-        slack.message(message)
+        messages = get_message(tit, response)
+        for message in messages:
+            slack.message(message)
 
 
 if __name__ == "__main__":
