@@ -3,13 +3,14 @@ import os
 import time
 
 import requests
+import zerohertzLib as zz
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from prettytable import PrettyTable
 
 KEY = json.loads(os.environ.get("KEY"))
 PROPERTY_ID = os.environ.get("PROPERTY_ID")
-WEBHOOK = os.environ.get("WEBHOOK")
+SLACK = os.environ.get("SLACK")
 PER = os.environ.get("PER")
 
 
@@ -71,19 +72,22 @@ def send_discord_message(webhook_url, contents):
     return response
 
 
-def main(tar):
+def main(tar, slack):
     for t, tit in tar.items():
         response = get_data(t)
         message = get_message(tit, response)
-        send_discord_message(WEBHOOK, message)
+        slack.message(message)
 
 
 if __name__ == "__main__":
     ga4_service = get_ga4_service(KEY)
+    slack = zz.api.SlackBot(
+        SLACK, "zerohertz", name="Google Analytics 4", icon_emoji="bar_chart"
+    )
     tar = {
         "city": "City",
         "firstUserSource": "First User Source",
         "pageTitle": "Page Title",
         "pageReferrer": "Page Referrer",
     }
-    main(tar)
+    main(tar, slack)

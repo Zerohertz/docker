@@ -1,3 +1,4 @@
+zerohertzLib
 requests
 google-api-python-client
 prettytable
