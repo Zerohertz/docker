@@ -36,7 +36,7 @@ def get_data(tar):
 
 
 def get_message(title, response):
-    messages = [f"# :rocket: {title}\n"]
+    messages = [f"> :rocket: {title}\n"]
     table = PrettyTable()
     table.field_names = [title, "People No.", "Time [sec]"]
     for row in response["rows"]:
