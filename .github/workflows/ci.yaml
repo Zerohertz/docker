@@ -53,8 +53,14 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}:latest
 
-      - name: Notify Discord
+      - name: Notify Slack
         run: |
-          curl -X POST -H "Content-Type: application/json" -d '{
-            "content": ":tada: [GitHub Actions] Build [${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}:latest](https://hub.docker.com/repository/docker/${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}/general) Completed."
-          }' ${{ secrets.DISCORD_WEBHOOK_URL }}
+          curl -X POST https://slack.com/api/chat.postMessage \
+          -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+          -H "Content-type: application/json" \
+          -d '{
+                  "channel": "zerohertz",
+                  "text": ":tada: [GitHub Actions] Build [${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}:latest](https://hub.docker.com/repository/docker/${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}/general) Completed.",
+                  "username": "GitHub",
+                  "icon_url": "https://github-production-user-asset-6210df.s3.amazonaws.com/42334717/286302856-85c52548-7217-4412-a5cb-a066f588fc13.png",
+              }'
