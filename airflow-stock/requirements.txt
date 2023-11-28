@@ -1,3 +1,6 @@
+zerohertzLib
+pandas
+openpyxl
 selenium
 requests
 prettytable
