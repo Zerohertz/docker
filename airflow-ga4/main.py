@@ -4,7 +4,7 @@ import os
 import zerohertzLib as zz
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
-from prettytable import PrettyTable
+from matplotlib import pyplot as plt
 
 KEY = json.loads(os.environ.get("KEY"))
 PROPERTY_ID = os.environ.get("PROPERTY_ID")
@@ -35,38 +35,44 @@ def get_data(tar):
     return response
 
 
-def get_message(title, response):
-    messages = [f"> :rocket: {title}\n"]
-    table = PrettyTable()
-    table.field_names = [title, "People No.", "Time [sec]"]
+def make_barv(title, response):
+    tmp_people = {}
+    tmp_time = {}
     for row in response["rows"]:
-        print(row)
         if "zerohertz.github.io" in row["dimensionValues"][0]["value"]:
             continue
-        if len(str(table)) > 1500:
-            messages.append("```\n" + str(table) + "\n```")
-            table = PrettyTable()
-            table.field_names = [title, "People No.", "Time [sec]"]
-        table.add_row(
-            [
-                row["dimensionValues"][0]["value"]
-                .replace(" | Zerohertz", "")
-                .replace("https://", "")[:50],
-                row["metricValues"][0]["value"],
-                str(round(float(row["metricValues"][1]["value"]))),
-            ]
+        key = (
+            row["dimensionValues"][0]["value"]
+            .replace(" | Zerohertz", "")
+            .replace("https://", "")[:20]
         )
-    else:
-        messages.append("```\n" + str(table) + "\n```")
-    return messages
+        tmp_people[key] = int(row["metricValues"][0]["value"])
+        tmp_time[key] = round(float(row["metricValues"][1]["value"]))
+    peop = {}
+    time = {}
+    etc_p = etc_t = 0
+    for key, value in tmp_people.items():
+        if value >= 5:
+            peop[key] = value
+            time[key] = tmp_time[key]
+        else:
+            etc_p += value
+            etc_t += tmp_time[key]
+    peop["Etc"], time["Etc"] = etc_p, etc_t
+    zz.plot.figure((30, 10))
+    plt.subplot(1, 2, 1)
+    zz.plot.barv(peop, title, "Number of People", "People", rot=45, save=False)
+    plt.subplot(1, 2, 2)
+    zz.plot.barv(time, title, "Time [sec]", "Time", rot=45, save=False)
+    zz.plot.savefig(title, 100)
 
 
 def main(tar, slack):
     for t, tit in tar.items():
         response = get_data(t)
-        messages = get_message(tit, response)
-        for message in messages:
-            slack.message(message)
+        make_barv(tit, response)
+        slack.message(f"> :rocket: {tit}")
+        slack.file(f"{tit.lower().replace(' ', '_')}.png")
 
 
 if __name__ == "__main__":
