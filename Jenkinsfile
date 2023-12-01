@@ -109,32 +109,30 @@ spec:
                             def apiResponse = sh(script: """
                                 curl -s "https://hub.docker.com/v2/repositories/${DOCKERHUB_USERNAME}/${imageName}/tags/?page_size=100"
                             """, returnStdout: true).trim()
+                            echo "Docker Hub API Response: ${apiResponse}"
                             if (apiResponse.contains("httperror 404")) {
                                 newTag = env.DEFAULT_TAG
                             } else {
-                                def currentTag = sh(script: "echo '${apiResponse}' | jq -r '.results[].name' | sort -V | tail -n 1", returnStdout: true).trim()
-                                try {
-                                    def (major, minor, patch) = currentTag.tokenize(".").collect { it.toInteger() }
-                                    newTag = "v${major}.${minor}.${patch + 1}"
-                                } catch (Exception e) {
-                                    newTag = env.DEFAULT_TAG
-                                }
+                                def currentTag = sh(script: "echo '${apiResponse}' | jq -r '.results[].name' | sort -V | grep v | tail -n 1", returnStdout: true).trim()
+                                echo "Current Tag: ${currentTag}"
+                                def version = currentTag.replaceAll("[^0-9.]", "")
+                                def (major, minor, patch) = version.tokenize(".").collect { it.toInteger() }
+                                newTag = "v${major}.${minor}.${patch + 1}"
                             }
+                            echo "New Tag: ${newTag}"
                         }
                         container("kaniko") {
                             script {
-                                def dockerfile = "Dockerfile"
-                                def image = "${DOCKERHUB_USERNAME}/${imageName}:${newTag}"
                                 try {
-                                    setBuildStatus("Build...", "PENDING", "$STAGE_NAME: $image")
-                                    sh ""
-                                    sh "/kaniko/executor --context ${dir} --dockerfile ${dir}/${dockerfile} --destination ${image}"
-                                    setBuildStatus("Success", "SUCCESS", "$STAGE_NAME: $image")
-                                    slackSend(color: "good", message: ":+1:  <${env.BUILD_URL}|[${env.JOB_NAME}: ${STAGE_NAME}]> SUCCESS\nBRANCH NAME: ${env.BRANCH_NAME}\nIMAGE: <https://hub.docker.com/repository/docker/zerohertzkr/${imageName}/general|${image}>")
+                                    setBuildStatus("Build...", "PENDING", "$STAGE_NAME - ${DOCKERHUB_USERNAME}/${imageName}:${newTag}")
+                                    sh "/kaniko/executor --context ${dir} --dockerfile ${dir}/Dockerfile --destination ${DOCKERHUB_USERNAME}/${imageName}:${newTag} --cleanup && mkdir -p /workspace"
+                                    sh "/kaniko/executor --context ${dir} --dockerfile ${dir}/Dockerfile --destination ${DOCKERHUB_USERNAME}/${imageName}:latest --cleanup && mkdir -p /workspace"
+                                    setBuildStatus("Success", "SUCCESS", "$STAGE_NAME - ${DOCKERHUB_USERNAME}/${imageName}:${newTag}")
+                                    slackSend(color: "good", message: ":+1:  <${env.BUILD_URL}|[${env.JOB_NAME}: ${STAGE_NAME}]> SUCCESS\nBRANCH NAME: ${env.BRANCH_NAME}\nIMAGE: <https://hub.docker.com/repository/docker/zerohertzkr/${imageName}/general|${DOCKERHUB_USERNAME}/${imageName}:${newTag}>")
                                 } catch (Exception e) {
                                     def STAGE_ERROR_MESSAGE = e.getMessage().split("\n")[0]
-                                    setBuildStatus(STAGE_ERROR_MESSAGE, "FAILURE", "$STAGE_NAME: $image")
-                                    slackSend(color: "danger", message: ":-1:  <${env.BUILD_URL}|[${env.JOB_NAME}: ${STAGE_NAME}]> SUCCESS\nBRANCH NAME: ${env.BRANCH_NAME}\nIMAGE: ${image}\nError Message: ${STAGE_ERROR_MESSAGE}")
+                                    setBuildStatus(STAGE_ERROR_MESSAGE, "FAILURE", "$STAGE_NAME - ${DOCKERHUB_USERNAME}/${imageName}:${newTag}")
+                                    slackSend(color: "danger", message: ":-1:  <${env.BUILD_URL}|[${env.JOB_NAME}: ${STAGE_NAME}]> SUCCESS\nBRANCH NAME: ${env.BRANCH_NAME}\nIMAGE: ${DOCKERHUB_USERNAME}/${imageName}:${newTag}\nError Message: ${STAGE_ERROR_MESSAGE}")
                                 }
                             }
                         }
