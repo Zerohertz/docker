@@ -52,13 +52,18 @@ def make_barv(title, response):
     time = {}
     etc_p = etc_t = 0
     for key, value in tmp_people.items():
-        if value >= 5:
+        if PER == 1:
             peop[key] = value
             time[key] = tmp_time[key]
         else:
-            etc_p += value
-            etc_t += tmp_time[key]
-    peop["Etc"], time["Etc"] = etc_p, etc_t
+            if value >= 5:
+                peop[key] = value
+                time[key] = tmp_time[key]
+            else:
+                etc_p += value
+                etc_t += tmp_time[key]
+    if PER > 1:
+        peop["Etc"], time["Etc"] = etc_p, etc_t
     zz.plot.figure((30, 10))
     plt.subplot(1, 2, 1)
     zz.plot.barv(peop, title, "Number of People", "People", rot=45, save=False)
