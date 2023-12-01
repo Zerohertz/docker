@@ -62,7 +62,7 @@ def make_barv(title, response):
             else:
                 etc_p += value
                 etc_t += tmp_time[key]
-    if PER > 1:
+    if int(PER) > 1:
         peop["Etc"], time["Etc"] = etc_p, etc_t
     zz.plot.figure((30, 10))
     plt.subplot(1, 2, 1)
