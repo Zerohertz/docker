@@ -125,8 +125,8 @@ spec:
                             script {
                                 try {
                                     setBuildStatus("Build...", "PENDING", "$STAGE_NAME - ${DOCKERHUB_USERNAME}/${imageName}:${newTag}")
-                                    sh "/kaniko/executor --context ${dir} --dockerfile ${dir}/Dockerfile --destination ${DOCKERHUB_USERNAME}/${imageName}:${newTag} --cleanup && mkdir -p /workspace"
                                     sh "/kaniko/executor --context ${dir} --dockerfile ${dir}/Dockerfile --destination ${DOCKERHUB_USERNAME}/${imageName}:latest --cleanup && mkdir -p /workspace"
+                                    sh "/kaniko/executor --context ${dir} --dockerfile ${dir}/Dockerfile --destination ${DOCKERHUB_USERNAME}/${imageName}:${newTag} --cleanup && mkdir -p /workspace"
                                     setBuildStatus("Success", "SUCCESS", "$STAGE_NAME - ${DOCKERHUB_USERNAME}/${imageName}:${newTag}")
                                     slackSend(color: "good", message: ":+1:  <${env.BUILD_URL}|[${env.JOB_NAME}: ${STAGE_NAME}]> SUCCESS\nBRANCH NAME: ${env.BRANCH_NAME}\nIMAGE: <https://hub.docker.com/repository/docker/zerohertzkr/${imageName}/general|${DOCKERHUB_USERNAME}/${imageName}:${newTag}>")
                                 } catch (Exception e) {
