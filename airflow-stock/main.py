@@ -1,9 +1,7 @@
-import os
 import time
 
 import pandas as pd
 import zerohertzLib as zz
-from prettytable import PrettyTable
 from selenium import webdriver
 
 SLACK = os.environ.get("SLACK")
@@ -32,15 +30,14 @@ def get_price(browser, name):
 
 
 def main(slack, browser, target):
-    slack.message("> :chart_with_upwards_trend: STOCK")
-    table = PrettyTable()
-    table.field_names = [
-        "NAME",
+    col = [
         "Purchase Price",
         "Current Price",
         "Quantity",
         "Profit and Loss (P&L)",
     ]
+    row = []
+    data = []
     TOTAL_BUY = TOTAL_EARN = 0
     for idx, tar in target.iterrows():
         stock_name, price = get_price(browser, tar["Name"])
@@ -49,9 +46,9 @@ def main(slack, browser, target):
                 f"Index: {idx}\nstock_name: {stock_name}\ntar['Name']: {tar['Name']}"
             )
         total = (price - tar["Buy"]) * tar["Quantity"]
-        table.add_row(
+        row.append(stock_name)
+        data.append(
             [
-                stock_name,
                 f"{tar['Buy']:,.0f}",
                 f"{price:,.0f}",
                 f"{tar['Quantity']:,.0f}",
@@ -60,8 +57,10 @@ def main(slack, browser, target):
         )
         TOTAL_BUY += tar["Buy"] * tar["Quantity"]
         TOTAL_EARN += total
-    table.add_row(["TOTAL", f"{TOTAL_BUY:,.0f}", "-", "-", f"{TOTAL_EARN:,.0f}"])
-    slack.message(str(table), codeblock=True)
+    row.append("TOTAL")
+    data.append([f"{TOTAL_BUY:,.0f}", "-", "-", f"{TOTAL_EARN:,.0f}"])
+    zz.plot.table(data, col, row)
+    slack.file("tmp.png")
 
 
 if __name__ == "__main__":
