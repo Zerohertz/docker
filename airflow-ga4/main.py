@@ -35,7 +35,7 @@ def get_data(tar):
     return response
 
 
-def make_barv(title, response):
+def make_barv(title, response, slack):
     tmp_people = {}
     tmp_time = {}
     for row in response["rows"]:
@@ -52,32 +52,35 @@ def make_barv(title, response):
     time = {}
     etc_p = etc_t = 0
     for key, value in tmp_people.items():
-        if PER == 1:
-            peop[key] = value
-            time[key] = tmp_time[key]
-        else:
+        if int(PER) > 1:
             if value >= 5:
                 peop[key] = value
                 time[key] = tmp_time[key]
             else:
                 etc_p += value
                 etc_t += tmp_time[key]
+        else:
+            peop[key] = value
+            time[key] = tmp_time[key]
     if int(PER) > 1:
         peop["Etc"], time["Etc"] = etc_p, etc_t
-    zz.plot.figure((30, 10))
-    plt.subplot(1, 2, 1)
-    zz.plot.barv(peop, title, "Number of People", "People", rot=45, save=False)
-    plt.subplot(1, 2, 2)
-    zz.plot.barv(time, title, "Time [sec]", "Time", rot=45, save=False)
-    zz.plot.savefig(title, 100)
+    try:
+        zz.plot.figure((30, 10))
+        plt.subplot(1, 2, 1)
+        zz.plot.barv(peop, title, "Number of People", "People", rot=45, save=False)
+        plt.subplot(1, 2, 2)
+        zz.plot.barv(time, title, "Time [sec]", "Time", rot=45, save=False)
+        zz.plot.savefig(title, 100)
+        slack.message(f"> :rocket: {title}")
+        slack.file(f"{title.lower().replace(' ', '_')}.png")
+    except Exception as e:
+        slack.message("Error" + str(e) + f"\npeop: {peop}\ntime: {time}", True)
 
 
 def main(tar, slack):
     for t, tit in tar.items():
         response = get_data(t)
-        make_barv(tit, response)
-        slack.message(f"> :rocket: {tit}")
-        slack.file(f"{tit.lower().replace(' ', '_')}.png")
+        make_barv(tit, response, slack)
 
 
 if __name__ == "__main__":
