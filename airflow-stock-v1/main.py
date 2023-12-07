@@ -60,8 +60,8 @@ def main(slack, browser, target):
         TOTAL_EARN += total
     row.append("TOTAL")
     data.append([f"{TOTAL_BUY:,.0f}", "-", "-", f"{TOTAL_EARN:,.0f}"])
-    zz.plot.table(data, col, row)
-    slack.file("tmp.png")
+    path = zz.plot.table(data, col, row, title="Stock")
+    slack.file(path)
 
 
 if __name__ == "__main__":
