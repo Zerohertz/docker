@@ -149,9 +149,9 @@ if __name__ == "__main__":
         slack.message(f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE)}원")
     except Exception as e:
         slack.message(
-            ":warning:" * 10
+            ":warning:" * 3
             + "ERROR!!!"
-            + ":warning:" * 10
+            + ":warning:" * 3
             + "\n"
             + "```\n"
             + str(e)
