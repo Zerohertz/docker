@@ -3,6 +3,7 @@ import os
 import zerohertzLib as zz
 
 SLACK = os.environ.get("SLACK")
+KOR = bool(int(os.environ.get("KOR")))
 
 if __name__ == "__main__":
     qsb = zz.quant.QuantSlackBotKI(
@@ -14,6 +15,6 @@ if __name__ == "__main__":
         name="Stock",
         icon_emoji="chart_with_upwards_trend",
         mp_num=6,
-        analysis=True,
+        kor=KOR,
     )
     qsb.sell()
