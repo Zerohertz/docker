@@ -17,7 +17,7 @@ if __name__ == "__main__":
             path="stock",
             name="Stock",
             icon_emoji="chart_with_upwards_trend",
-            mp_num=6,
+            mp_num=MP_NUM,
             kor=KOR,
         )
         qsb.sell()

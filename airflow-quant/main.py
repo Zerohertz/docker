@@ -6,6 +6,7 @@ SYMBOLS = int(os.environ.get("SYMBOLS"))
 SLACK = os.environ.get("SLACK")
 START_DAY = os.environ.get("START_DAY")
 TOP = int(os.environ.get("TOP"))
+MP_NUM = int(os.environ.get("MP_NUM"))
 KOR = bool(int(os.environ.get("KOR")))
 
 if __name__ == "__main__":
@@ -18,7 +19,7 @@ if __name__ == "__main__":
             top=TOP,
             name="Stock",
             icon_emoji="chart_with_upwards_trend",
-            mp_num=6,
+            mp_num=MP_NUM,
             kor=KOR,
         )
         qsb.buy()
