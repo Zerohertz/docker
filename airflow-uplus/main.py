@@ -126,13 +126,13 @@ if __name__ == "__main__":
         # 결제 잔액 확인
         tmp = get_info(browser)
         if "납부할 요금이 없습니다." in tmp:
-            slack.message(f":bell: [결제 :x:] {tmp}")
+            slack.message(f":bell: [결제 :x:] {int(tmp):,.0f}")
             exit()
         tmp = get_price(browser)
 
         # 결제 가격
         if tmp == 0 or tmp == 5999:
-            slack.message(f":no_bell: [결제 :x:] 자동결제 금액:\t{tmp}원")
+            slack.message(f":no_bell: [결제 :x:] 자동결제 금액:\t{int(tmp):,.0f}원")
             exit()
         elif tmp > 5999 + 5999:
             PRICE = "5999"
@@ -140,13 +140,13 @@ if __name__ == "__main__":
             PRICE = str(tmp - 5999)
 
         # 결제 정보 입력
-        slack.message(f":bell: [결제 :o:] 결제 예정 금액:\t{PRICE}원")
+        slack.message(f":bell: [결제 :o:] 결제 예정 금액:\t{int(PRICE):,.0f}원")
         info(browser, PRICE)
 
         # 결제
         xpath_click(browser, "/html/body/div[5]/div[1]/div/div/footer/button[2]")
-        slack.message(f":bell: [결제 :o:] 결제 완료!:\t{PRICE}원")
-        slack.message(f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE)}원")
+        slack.message(f":bell: [결제 :o:] 결제 완료!:\t{int(PRICE):,.0f}원")
+        slack.message(f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE):,.0f}원")
     except Exception as e:
         slack.message(
             ":warning:" * 3
