@@ -12,7 +12,7 @@ if __name__ == "__main__":
         qsb = zz.quant.QuantSlackBotKI(
             [],
             token=SLACK,
-            channel="stock",
+            channel="zerohertz",
             start_day=START_DAY,
             path="stock",
             name="Stock",
