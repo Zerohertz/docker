@@ -23,6 +23,18 @@ if __name__ == "__main__":
             kor=KOR,
         )
         qsb.buy()
+        qsb = zz.quant.QuantSlackBotFDR(
+            ["069500", "226980", "114800", "251340", "252670"],
+            token=SLACK,
+            channel="stock",
+            start_day=START_DAY,
+            top=TOP,
+            name="Stock",
+            icon_emoji="chart_with_upwards_trend",
+            mp_num=MP_NUM,
+            kor=KOR,
+        )
+        qsb.index()
     except Exception as e:
         qsb.message(
             ":warning:" * 3
