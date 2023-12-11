@@ -1,9 +1,10 @@
 import os
 import time
 
-import zerohertzLib as zz
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+
+import zerohertzLib as zz
 
 # Slack Bot Token
 SLACK = os.environ.get("SLACK")
@@ -102,7 +103,7 @@ def info(browser, PRICE):
 
 
 if __name__ == "__main__":
-    slack = zz.api.SlackBot(SLACK, "zerohertz", name="U+", icon_emoji="iphone")
+    slack = zz.api.SlackBot(SLACK, "uplus", name="U+", icon_emoji="iphone")
     try:
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")

@@ -82,7 +82,7 @@ def main(tar, slack):
 if __name__ == "__main__":
     ga4_service = get_ga4_service(KEY)
     slack = zz.api.SlackBot(
-        SLACK, "zerohertz", name="Google Analytics 4", icon_emoji="bar_chart"
+        SLACK, "google_analytics_4", name="Google Analytics 4", icon_emoji="bar_chart"
     )
     tar = {
         "city": "City",

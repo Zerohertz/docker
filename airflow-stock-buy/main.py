@@ -11,13 +11,17 @@ KOR = bool(int(os.environ.get("KOR")))
 
 if __name__ == "__main__":
     try:
+        if KOR:
+            channel = "stock_kor_buy"
+        else:
+            channel = "stock_ovs_buy"
         qsb = zz.quant.QuantSlackBotFDR(
             SYMBOLS,
             token=SLACK,
-            channel="stock",
+            channel=channel,
             start_day=START_DAY,
             top=TOP,
-            name="Stock",
+            name="Buy",
             icon_emoji="chart_with_upwards_trend",
             mp_num=MP_NUM,
             kor=KOR,
@@ -27,10 +31,10 @@ if __name__ == "__main__":
             qsb = zz.quant.QuantSlackBotFDR(
                 ["069500", "226980", "114800", "251340", "252670"],
                 token=SLACK,
-                channel="stock",
+                channel=channel,
                 start_day=START_DAY,
                 top=TOP,
-                name="Stock",
+                name="Index",
                 icon_emoji="chart_with_upwards_trend",
                 mp_num=MP_NUM,
                 kor=KOR,

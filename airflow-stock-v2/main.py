@@ -7,11 +7,15 @@ KOR = bool(int(os.environ.get("KOR")))
 
 if __name__ == "__main__":
     try:
+        if KOR:
+            channel = "stock_kor_balance"
+        else:
+            channel = "stock_ovs_balance"
         slack = zz.api.SlackBot(
             SLACK,
-            channel="zerohertz",
-            name="Stock",
-            icon_emoji="chart_with_upwards_trend",
+            channel=channel,
+            name="Balance",
+            icon_emoji="moneybag",
         )
         balance = zz.quant.Balance(path="stock", kor=KOR)
         path = balance.table()

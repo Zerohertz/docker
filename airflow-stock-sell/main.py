@@ -9,10 +9,14 @@ KOR = bool(int(os.environ.get("KOR")))
 
 if __name__ == "__main__":
     try:
+        if KOR:
+            channel = "stock_kor_sell"
+        else:
+            channel = "stock_ovs_sell"
         qsb = zz.quant.QuantSlackBotKI(
             [],
             token=SLACK,
-            channel="zerohertz",
+            channel=channel,
             start_day=START_DAY,
             path="stock",
             name="Stock",
