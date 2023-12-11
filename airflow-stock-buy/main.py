@@ -29,7 +29,8 @@ if __name__ == "__main__":
         qsb.buy()
         if KOR:
             qsb = zz.quant.QuantSlackBotFDR(
-                ["069500", "226980", "114800", "251340", "252670"],
+                ["069500"],
+                # ["069500", "226980", "114800", "251340", "252670"],
                 token=SLACK,
                 channel=channel,
                 start_day=START_DAY,
