@@ -2,11 +2,10 @@ import json
 import os
 import traceback
 
+import zerohertzLib as zz
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from matplotlib import pyplot as plt
-
-import zerohertzLib as zz
 
 KEY = json.loads(os.environ.get("KEY"))
 PROPERTY_ID = os.environ.get("PROPERTY_ID")
@@ -38,7 +37,7 @@ def get_data(tar):
     return response
 
 
-def make_barh(title, response, slack):
+def make_barh(title, response, slack, thread_ts):
     tmp_people = {}
     tmp_time = {}
     for row in response["rows"][::-1]:
@@ -70,14 +69,18 @@ def make_barh(title, response, slack):
     plt.subplot(1, 2, 2)
     zz.plot.barh(time, title, "Time [sec]", "Time", rot=0, per=False, save=False)
     path = zz.plot.savefig(title, 100)
-    slack.message(f"> :rocket: {title}")
-    slack.file(path)
+    slack.file(path, thread_ts=thread_ts)
 
 
 def main(tar, slack):
+    if int(PER) <= 2:
+        day = "day"
+    else:
+        day = "days"
+    thread_ts = slack.message(f"> :rocket: {PER}{day} Report").json()["ts"]
     for t, tit in tar.items():
         response = get_data(t)
-        make_barh(tit, response, slack)
+        make_barh(tit, response, slack, thread_ts)
 
 
 if __name__ == "__main__":
