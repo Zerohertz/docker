@@ -1,5 +1,6 @@
 import json
 import os
+import traceback
 
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
@@ -90,4 +91,16 @@ if __name__ == "__main__":
         "pageTitle": "Page Title",
         "pageReferrer": "Page Referrer",
     }
-    main(tar, slack)
+    try:
+        main(tar, slack)
+    except Exception as e:
+        response = slack.message(
+            ":warning:" * 3
+            + "\tERROR!!!\t"
+            + ":warning:" * 3
+            + "\n"
+            + "```\n"
+            + str(e)
+            + "\n```",
+        )
+        slack.message(traceback.format_exc(), True, response.json()["ts"])

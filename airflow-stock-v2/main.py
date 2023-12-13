@@ -1,4 +1,5 @@
 import os
+import traceback
 
 import zerohertzLib as zz
 
@@ -19,14 +20,18 @@ if __name__ == "__main__":
         )
         balance = zz.quant.Balance(path="stock", kor=KOR)
         path = balance.table()
-        slack.file(path)
+        if path is None:
+            slack.message("Balance: NULL", True)
+        else:
+            slack.file(path)
     except Exception as e:
-        slack.message(
+        response = slack.message(
             ":warning:" * 3
-            + "ERROR!!!"
+            + "\tERROR!!!\t"
             + ":warning:" * 3
             + "\n"
             + "```\n"
             + str(e)
             + "\n```",
         )
+        slack.message(traceback.format_exc(), True, response.json()["ts"])

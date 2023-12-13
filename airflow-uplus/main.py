@@ -1,5 +1,6 @@
 import os
 import time
+import traceback
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
@@ -149,12 +150,13 @@ if __name__ == "__main__":
         slack.message(f":bell: [결제 :o:] 결제 완료!:\t{int(PRICE):,.0f}원")
         slack.message(f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE):,.0f}원")
     except Exception as e:
-        slack.message(
+        response = slack.message(
             ":warning:" * 3
-            + "ERROR!!!"
+            + "\tERROR!!!\t"
             + ":warning:" * 3
             + "\n"
             + "```\n"
             + str(e)
             + "\n```",
         )
+        slack.message(traceback.format_exc(), True, response.json()["ts"])
