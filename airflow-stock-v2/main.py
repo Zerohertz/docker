@@ -19,11 +19,15 @@ if __name__ == "__main__":
             icon_emoji="moneybag",
         )
         balance = zz.quant.Balance(path="stock", kor=KOR)
-        path = balance.table()
-        if path is None:
+        path_balance, path_portfolio = balance.table(), balance.pie()
+        if path_balance is None:
             slack.message("Balance: NULL", True)
         else:
-            slack.file(path)
+            response = slack.file(path_balance)
+            slack.file(
+                path_portfolio,
+                list(response.json()["file"]["shares"]["private"].values())[0][0]["ts"],
+            )
     except Exception as e:
         response = slack.message(
             ":warning:" * 3
