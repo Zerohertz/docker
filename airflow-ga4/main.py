@@ -44,7 +44,7 @@ def make_barh(title, response, slack, thread_ts):
         key = (
             row["dimensionValues"][0]["value"]
             .replace(" | Zerohertz", "")
-            .replace("https://", "")
+            .replace("https://", "")[:60]
         )
         tmp_people[key] = int(row["metricValues"][0]["value"])
         tmp_time[key] = round(float(row["metricValues"][1]["value"]))
