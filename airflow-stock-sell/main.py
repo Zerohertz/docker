@@ -3,9 +3,9 @@ import traceback
 
 import zerohertzLib as zz
 
-SLACK = os.environ.get("SLACK")
 START_DAY = os.environ.get("START_DAY")
 TOP = int(os.environ.get("TOP"))
+SLACK = os.environ.get("SLACK")
 MP_NUM = int(os.environ.get("MP_NUM"))
 KOR = bool(int(os.environ.get("KOR")))
 
@@ -18,6 +18,7 @@ if __name__ == "__main__":
         qsb = zz.quant.QuantSlackBotKI(
             [],
             start_day=START_DAY,
+            ohlc="Close",
             top=TOP,
             token=SLACK,
             channel=channel,
