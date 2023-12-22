@@ -2,10 +2,9 @@ import os
 import time
 import traceback
 
+import zerohertzLib as zz
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
-
-import zerohertzLib as zz
 
 # Slack Bot Token
 SLACK = os.environ.get("SLACK")
@@ -80,7 +79,7 @@ def login(browser):
         browser,
         "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div/section/div/button",
     )
-    time.sleep(5)
+    time.sleep(10)
 
 
 def move(browser):
