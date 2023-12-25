@@ -15,7 +15,7 @@ if __name__ == "__main__":
         if KOR:
             channel = "stock_kor_balance"
             data_path = "stock/stock-kor"
-            dim = "￦"
+            dim = "₩"
         else:
             channel = "stock_ovs_balance"
             data_path = "stock/stock-ovs"
