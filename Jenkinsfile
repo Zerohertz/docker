@@ -82,7 +82,7 @@ spec:
                     } catch (Exception e) {
                         def STAGE_ERROR_MESSAGE = e.getMessage().split("\n")[0]
                         setBuildStatus(STAGE_ERROR_MESSAGE, "FAILURE", "$STAGE_NAME")
-                        slackSend(color: "danger", message: ":-1:  <${env.BUILD_URL}|[${env.JOB_NAME}: ${STAGE_NAME}]> SUCCESS\nBRANCH NAME: ${env.BRANCH_NAME}\nError Message: ${STAGE_ERROR_MESSAGE}")
+                        slackSend(color: "danger", message: ":-1:  <${env.BUILD_URL}|[${env.JOB_NAME}: ${STAGE_NAME}]> FAIL\nBRANCH NAME: ${env.BRANCH_NAME}\nError Message: ${STAGE_ERROR_MESSAGE}")
                         throw e
                     }
                 }
@@ -132,7 +132,7 @@ spec:
                                 } catch (Exception e) {
                                     def STAGE_ERROR_MESSAGE = e.getMessage().split("\n")[0]
                                     setBuildStatus(STAGE_ERROR_MESSAGE, "FAILURE", "$STAGE_NAME - ${DOCKERHUB_USERNAME}/${imageName}:${newTag}")
-                                    slackSend(color: "danger", message: ":-1:  <${env.BUILD_URL}|[${env.JOB_NAME}: ${STAGE_NAME}]> SUCCESS\nBRANCH NAME: ${env.BRANCH_NAME}\nIMAGE: ${DOCKERHUB_USERNAME}/${imageName}:${newTag}\nError Message: ${STAGE_ERROR_MESSAGE}")
+                                    slackSend(color: "danger", message: ":-1:  <${env.BUILD_URL}|[${env.JOB_NAME}: ${STAGE_NAME}]> FAIL\nBRANCH NAME: ${env.BRANCH_NAME}\nIMAGE: ${DOCKERHUB_USERNAME}/${imageName}:${newTag}\nError Message: ${STAGE_ERROR_MESSAGE}")
                                 }
                             }
                         }
