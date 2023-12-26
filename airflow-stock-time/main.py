@@ -39,7 +39,7 @@ def main(slack, data_path, dim):
         ylab=f"Asset [{dim}]",
         stacked=True,
         title="",
-        markersize=6,
+        markersize=0,
         save=False,
     )
     plt.gca().yaxis.set_major_formatter(
