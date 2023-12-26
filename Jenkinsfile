@@ -73,7 +73,7 @@ spec:
             steps {
                 script {
                     try {
-                        setBuildStatus("Detact...", "PENDING", "$STAGE_NAME")
+                        setBuildStatus("Detect...", "PENDING", "$STAGE_NAME")
                         def patterns = env.CHANGE_PATTERNS.split(",")
                         def regex = patterns.collect { it.trim() }.join("|")
                         changedDirs = sh(script: "git diff --name-only HEAD^ HEAD | grep -E '${regex}' | xargs -r -n 1 dirname | uniq", returnStdout: true).trim().split("\n")
