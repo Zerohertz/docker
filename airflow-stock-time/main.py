@@ -31,7 +31,7 @@ def main(slack, data_path, dim):
         for key, value in data_["stock"].items():
             ydata[key][idx] = value[2] * value[3]
         ydata["Total"][idx] = data_["cash"]
-    zz.plot.figure((20, 10))
+    zz.plot.figure((30, 15))
     zz.plot.plot(
         xdata,
         ydata,
@@ -39,13 +39,19 @@ def main(slack, data_path, dim):
         ylab=f"Asset [{dim}]",
         stacked=True,
         title="",
+        colors="Set2",
         markersize=0,
         save=False,
     )
     plt.gca().yaxis.set_major_formatter(
         ticker.FuncFormatter(lambda x, p: format(int(x), ","))
     )
-    plt.legend(loc="upper left", bbox_to_anchor=(1, 1.02))
+    plt.legend(
+        loc="upper left",
+        bbox_to_anchor=(1, 1.02),
+        ncol=len(stocks) // 30 + 1,
+        fontsize="small",
+    )
     path_time = zz.plot.savefig("time", 100)
     slack.file(path_time)
     return None
