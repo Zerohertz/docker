@@ -24,87 +24,8 @@ CARD_YEAR = os.environ.get("CARD_YEAR")
 CARD_MONTH = os.environ.get("CARD_MONTH")
 
 
-def xpath_click(browser, element):
-    element = browser.find_element("xpath", element)
-    element.click()
-
-
-def id_send(browser, element, key):
-    element = browser.find_element("id", element)
-    element.send_keys(key)
-
-
-def name_send(browser, element, key):
-    element = browser.find_element("name", element)
-    element.send_keys(key)
-
-
-def id_select(browser, element, key):
-    element = browser.find_element("id", element)
-    select = Select(element)
-    select.select_by_value(key)
-
-
-def get_info(browser):
-    element = browser.find_element(
-        "xpath",
-        "/html/body/div[5]/div[1]/div/div/div/div/div/div/div/div[1]/div/p",  # (이번달 납부하실 금액은 **,***원입니다.) | (납부할 요금이 없습니다.)
-    )
-    return element.text
-
-
-def get_price(browser):
-    element = browser.find_element(
-        "xpath",
-        "/html/body/div[5]/div[1]/div/div/div/div/div[1]/div/div/div[1]/div/p/strong",  # 이번달 납부하실 금액은 (**,***)원입니다.
-    )
-    return int(element.text[:-1].replace(",", ""))
-
-
-def price_send(browser, PRICE):
-    element = browser.find_element("id", "displayPayAmt")
-    browser.execute_script("arguments[0].value = '';", element)
-    element = browser.find_element("xpath", '//*[@id="displayPayAmt"]')
-    element.send_keys(PRICE)
-
-
-def login(browser):
-    id_send(browser, "username-1-6", USER_ID)
-    id_send(browser, "password-1", USER_PASSWORD)
-    xpath_click(
-        browser,
-        "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div/section/div/button",
-    )
-    xpath_click(
-        browser,
-        "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div/section/div/button",
-    )
-    time.sleep(10)
-
-
-def move(browser):
-    browser.get("https://www.lguplus.com/mypage/payinfo?p=1")
-    time.sleep(3)
-    xpath_click(
-        browser,
-        "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div[2]/div[1]/div/div[3]/button[1]",
-    )
-    time.sleep(8)
-
-
-def info(browser, PRICE):
-    id_send(browser, "cardNo", CARD_NO)
-    name_send(browser, "cardCustName", NAME)
-    name_send(browser, "cardCustbirth", BIRTH)
-    id_select(browser, "selCardDate1", CARD_YEAR)
-    id_select(browser, "selCardDate2", CARD_MONTH)
-    price_send(browser, PRICE)
-    price_send(browser, PRICE)
-
-
-if __name__ == "__main__":
-    slack = zz.api.SlackBot(SLACK, "uplus", name="U+", icon_emoji="iphone")
-    try:
+class Browser:
+    def __init__(self):
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -113,41 +34,117 @@ if __name__ == "__main__":
         options.add_argument(
             "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36"
         )
-        browser = webdriver.Chrome(options)
-
+        self.browser = webdriver.Chrome(options)
         # U+ 접속
-        browser.get("https://www.lguplus.com/login/onid-login")
+        self.browser.get("https://www.lguplus.com/login/onid-login")
 
-        # U+ 로그인
-        login(browser)
+    def xpath_click(self, element):
+        element = self.browser.find_element("xpath", element)
+        element.click()
 
-        # 결제 화면 이동
-        move(browser)
+    def id_send(self, element, key):
+        element = self.browser.find_element("id", element)
+        element.send_keys(key)
 
-        # 결제 잔액 확인
-        tmp = get_info(browser)
-        if "납부할 요금이 없습니다." in tmp:
-            slack.message(f":bell: [결제 :x:] {int(tmp):,.0f}")
-            exit()
-        tmp = get_price(browser)
+    def name_send(self, element, key):
+        element = self.browser.find_element("name", element)
+        element.send_keys(key)
 
-        # 결제 가격
-        if tmp == 0 or tmp == 5999:
-            slack.message(f":no_bell: [결제 :x:] 자동결제 금액:\t{int(tmp):,.0f}원")
-            exit()
-        elif tmp > 5999 + 5999:
-            PRICE = "5999"
-        else:
-            PRICE = str(tmp - 5999)
+    def id_select(self, element, key):
+        element = self.find_element("id", element)
+        select = Select(element)
+        select.select_by_value(key)
 
-        # 결제 정보 입력
-        slack.message(f":bell: [결제 :o:] 결제 예정 금액:\t{int(PRICE):,.0f}원")
-        info(browser, PRICE)
+    def get_info(self):
+        return self.browser.find_element(
+            "xpath",
+            "/html/body/div[5]/div[1]/div/div/div/div/div/div/div/div[1]/div/p",  # (이번달 납부하실 금액은 **,***원입니다.) | (납부할 요금이 없습니다.)
+        ).text
 
-        # 결제
-        xpath_click(browser, "/html/body/div[5]/div[1]/div/div/footer/button[2]")
-        slack.message(f":bell: [결제 :o:] 결제 완료!:\t{int(PRICE):,.0f}원")
-        slack.message(f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE):,.0f}원")
+    def get_status(self):
+        return self.browser.find_element(
+            "xpath", "/html/body/div[7]/div[1]/div/div/div/div"
+        ).text
+
+    def get_price(self):
+        element = self.browser.find_element(
+            "xpath",
+            "/html/body/div[5]/div[1]/div/div/div/div/div[1]/div/div/div[1]/div/p/strong",  # 이번달 납부하실 금액은 (**,***)원입니다.
+        )
+        return int(element.text[:-1].replace(",", ""))
+
+    def price_send(self, PRICE):
+        element = self.browser.find_element("id", "displayPayAmt")
+        self.browser.execute_script("arguments[0].value = '';", element)
+        element = self.browser.find_element("xpath", '//*[@id="displayPayAmt"]')
+        element.send_keys(PRICE)
+
+    def login(self):
+        self.id_send("username-1-6", USER_ID)
+        self.id_send("password-1", USER_PASSWORD)
+        self.xpath_click(
+            "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div/section/div/button"
+        )
+        self.xpath_click(
+            "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div/section/div/button"
+        )
+        time.sleep(10)
+
+    def move(self):
+        self.browser.get("https://www.lguplus.com/mypage/payinfo?p=1")
+        time.sleep(3)
+        self.xpath_click(
+            "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div[2]/div[1]/div/div[3]/button[1]"
+        )
+        time.sleep(8)
+
+    def info(self, PRICE):
+        self.id_send("cardNo", CARD_NO)
+        self.name_send("cardCustName", NAME)
+        self.name_send("cardCustbirth", BIRTH)
+        self.id_select("selCardDate1", CARD_YEAR)
+        self.id_select("selCardDate2", CARD_MONTH)
+        self.price_send(PRICE)
+        self.price_send(PRICE)
+
+
+def main(slack):
+    browser = Browser()
+    # U+ 로그인
+    browser.login()
+    # 결제 화면 이동
+    browser.move()
+    # 결제 잔액 확인
+    try:
+        tmp = browser.get_info()
+    except:
+        slack.message(browser.get_status())
+        return
+    if "납부할 요금이 없습니다." in tmp:
+        slack.message(f":bell: [결제 :x:] {int(tmp):,.0f}")
+        return
+    tmp = browser.get_price()
+    # 결제 가격
+    if tmp == 0 or tmp == 5999:
+        slack.message(f":no_bell: [결제 :x:] 자동결제 금액:\t{int(tmp):,.0f}원")
+        return
+    elif tmp > 5999 + 5999:
+        PRICE = "5999"
+    else:
+        PRICE = str(tmp - 5999)
+    # 결제 정보 입력
+    slack.message(f":bell: [결제 :o:] 결제 예정 금액:\t{int(PRICE):,.0f}원")
+    browser.info(PRICE)
+    # 결제
+    browser.xpath_click("/html/body/div[5]/div[1]/div/div/footer/button[2]")
+    slack.message(f":bell: [결제 :o:] 결제 완료!:\t{int(PRICE):,.0f}원")
+    slack.message(f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE):,.0f}원")
+
+
+if __name__ == "__main__":
+    slack = zz.api.SlackBot(SLACK, "uplus", name="U+", icon_emoji="iphone")
+    try:
+        main(slack)
     except Exception as e:
         response = slack.message(
             ":warning:" * 3
