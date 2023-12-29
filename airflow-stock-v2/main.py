@@ -13,8 +13,7 @@ KOR = bool(int(os.environ.get("KOR")))
 
 
 def main(slack, data_path, test_code, dim):
-    korea_time_zone = pytz.timezone("Asia/Seoul")
-    now = datetime.now(korea_time_zone)
+    now = datetime.now()
     test_start_day = now - timedelta(days=30)
     test_data = fdr.DataReader(test_code, test_start_day)
     if test_data.index[-1].day != now.day:
@@ -23,6 +22,8 @@ def main(slack, data_path, test_code, dim):
         data = zz.util.Json(f"{data_path}.json").data
     except:
         data = []
+    korea_time_zone = pytz.timezone("Asia/Seoul")
+    now = datetime.now(korea_time_zone)
     balance = zz.quant.Balance(path="stock", kor=KOR)
     data.append(balance.balance)
     data[-1]["time"] = str(now)
