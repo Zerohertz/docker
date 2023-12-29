@@ -38,19 +38,19 @@ class Browser:
         # U+ 접속
         self.browser.get("https://www.lguplus.com/login/onid-login")
 
-    def xpath_click(self, element):
+    def click_xpath(self, element):
         element = self.browser.find_element("xpath", element)
         element.click()
 
-    def id_send(self, element, key):
+    def send_id(self, element, key):
         element = self.browser.find_element("id", element)
         element.send_keys(key)
 
-    def name_send(self, element, key):
+    def send_name(self, element, key):
         element = self.browser.find_element("name", element)
         element.send_keys(key)
 
-    def id_select(self, element, key):
+    def select_id(self, element, key):
         element = self.find_element("id", element)
         select = Select(element)
         select.select_by_value(key)
@@ -62,9 +62,15 @@ class Browser:
         ).text
 
     def get_status(self):
-        return self.browser.find_element(
-            "xpath", "/html/body/div[7]/div[1]/div/div/div/div"
-        ).text
+        try:
+            return self.browser.find_element(
+                "xpath", "/html/body/div[7]/div[1]/div/div/div/div"
+            ).text
+        except:
+            return self.browser.find_element(
+                "xpath",
+                "/html/body/div[6]/div[1]/div/div/div/div/div/div/div/div[1]/div/p",
+            ).text
 
     def get_price(self):
         element = self.browser.find_element(
@@ -73,39 +79,38 @@ class Browser:
         )
         return int(element.text[:-1].replace(",", ""))
 
-    def price_send(self, PRICE):
+    def send_price(self, PRICE):
         element = self.browser.find_element("id", "displayPayAmt")
         self.browser.execute_script("arguments[0].value = '';", element)
         element = self.browser.find_element("xpath", '//*[@id="displayPayAmt"]')
         element.send_keys(PRICE)
 
     def login(self):
-        self.id_send("username-1-6", USER_ID)
-        self.id_send("password-1", USER_PASSWORD)
-        self.xpath_click(
-            "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div/section/div/button"
-        )
-        self.xpath_click(
-            "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div/section/div/button"
-        )
+        self.send_id("username-1-6", USER_ID)
+        self.send_id("password-1", USER_PASSWORD)
+        while len(self.browser.current_url.split("/")) == 5:
+            self.click_xpath(
+                "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div/section/div/button"
+            )
+            time.sleep(3)
         time.sleep(10)
 
     def move(self):
         self.browser.get("https://www.lguplus.com/mypage/payinfo?p=1")
         time.sleep(3)
-        self.xpath_click(
+        self.click_xpath(
             "/html/body/div[1]/div/div/div[4]/div[1]/div/div[2]/div/div/div/div[2]/div[1]/div/div[3]/button[1]"
         )
         time.sleep(8)
 
     def info(self, PRICE):
-        self.id_send("cardNo", CARD_NO)
-        self.name_send("cardCustName", NAME)
-        self.name_send("cardCustbirth", BIRTH)
-        self.id_select("selCardDate1", CARD_YEAR)
-        self.id_select("selCardDate2", CARD_MONTH)
-        self.price_send(PRICE)
-        self.price_send(PRICE)
+        self.send_id("cardNo", CARD_NO)
+        self.send_name("cardCustName", NAME)
+        self.send_name("cardCustbirth", BIRTH)
+        self.select_id("selCardDate1", CARD_YEAR)
+        self.select_id("selCardDate2", CARD_MONTH)
+        self.send_price(PRICE)
+        self.send_price(PRICE)
 
 
 def main(slack):
@@ -119,15 +124,15 @@ def main(slack):
         tmp = browser.get_info()
     except:
         slack.message(browser.get_status())
-        return
+        return None
     if "납부할 요금이 없습니다." in tmp:
         slack.message(f":bell: [결제 :x:] {int(tmp):,.0f}")
-        return
+        return None
     tmp = browser.get_price()
     # 결제 가격
     if tmp == 0 or tmp == 5999:
         slack.message(f":no_bell: [결제 :x:] 자동결제 금액:\t{int(tmp):,.0f}원")
-        return
+        return None
     elif tmp > 5999 + 5999:
         PRICE = "5999"
     else:
@@ -136,9 +141,10 @@ def main(slack):
     slack.message(f":bell: [결제 :o:] 결제 예정 금액:\t{int(PRICE):,.0f}원")
     browser.info(PRICE)
     # 결제
-    browser.xpath_click("/html/body/div[5]/div[1]/div/div/footer/button[2]")
+    browser.click_xpath("/html/body/div[5]/div[1]/div/div/footer/button[2]")
     slack.message(f":bell: [결제 :o:] 결제 완료!:\t{int(PRICE):,.0f}원")
     slack.message(f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE):,.0f}원")
+    return None
 
 
 if __name__ == "__main__":
