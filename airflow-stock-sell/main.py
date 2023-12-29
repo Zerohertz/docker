@@ -1,6 +1,8 @@
 import os
 import traceback
+from datetime import datetime, timedelta
 
+import FinanceDataReader as fdr
 import zerohertzLib as zz
 
 START_DAY = os.environ.get("START_DAY")
@@ -9,28 +11,44 @@ SLACK = os.environ.get("SLACK")
 MP_NUM = int(os.environ.get("MP_NUM"))
 KOR = bool(int(os.environ.get("KOR")))
 
+
+def main(channel, test_code):
+    now = datetime.now()
+    test_start_day = now - timedelta(days=30)
+    test_data = fdr.DataReader(test_code, test_start_day)
+    if test_data.index[-1].day != now.day:
+        return False
+    qsb = zz.quant.QuantSlackBotKI(
+        [],
+        start_day=START_DAY,
+        ohlc="Close",
+        top=TOP,
+        token=SLACK,
+        channel=channel,
+        name="Sell",
+        icon_emoji="chart_with_upwards_trend",
+        mp_num=MP_NUM,
+        kor=KOR,
+        path="stock",
+    )
+    qsb.sell()
+    return True
+
+
 if __name__ == "__main__":
+    if KOR:
+        channel = "stock_kor_sell"
+        code = "005930"
+    else:
+        channel = "stock_ovs_sell"
+        code = "AAPL"
+    slack = zz.api.SlackBot(SLACK, channel, name="Error", icon_emoji="warning")
     try:
-        if KOR:
-            channel = "stock_kor_sell"
-        else:
-            channel = "stock_ovs_sell"
-        qsb = zz.quant.QuantSlackBotKI(
-            [],
-            start_day=START_DAY,
-            ohlc="Close",
-            top=TOP,
-            token=SLACK,
-            channel=channel,
-            name="Sell",
-            icon_emoji="chart_with_upwards_trend",
-            mp_num=MP_NUM,
-            kor=KOR,
-            path="stock",
-        )
-        qsb.sell()
+        if not main(channel, code):
+            system = zz.api.SlackBot(SLACK, channel, name="System", icon_emoji="bank")
+            system.message("> :zzz: 오늘은 휴장일 입니다. :zzz:")
     except Exception as e:
-        response = qsb.message(
+        response = slack.message(
             ":warning:" * 3
             + "\tERROR!!!\t"
             + ":warning:" * 3
@@ -39,4 +57,4 @@ if __name__ == "__main__":
             + str(e)
             + "\n```",
         )
-        qsb.message(traceback.format_exc(), True, response.json()["ts"])
+        slack.message(traceback.format_exc(), True, response.json()["ts"])
