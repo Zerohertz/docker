@@ -33,21 +33,21 @@ def main(channel, test_code):
         kor=KOR,
     )
     qsb.buy()
-    if KOR:
-        qsb = zz.quant.QuantSlackBotFDR(
-            ["069500"],
-            # ["069500", "226980", "114800", "251340", "252670"],
-            start_day=START_DAY,
-            ohlc="Close",
-            top=TOP,
-            token=SLACK,
-            channel=channel,
-            name="Index",
-            icon_emoji="chart_with_upwards_trend",
-            mp_num=MP_NUM,
-            kor=KOR,
-        )
-        qsb.index()
+    # if KOR:
+    #     qsb = zz.quant.QuantSlackBotFDR(
+    #         ["069500"],
+    #         # ["069500", "226980", "114800", "251340", "252670"],
+    #         start_day=START_DAY,
+    #         ohlc="Close",
+    #         top=TOP,
+    #         token=SLACK,
+    #         channel=channel,
+    #         name="Index",
+    #         icon_emoji="chart_with_upwards_trend",
+    #         mp_num=MP_NUM,
+    #         kor=KOR,
+    #     )
+    #     qsb.index()
     return True
 
 
