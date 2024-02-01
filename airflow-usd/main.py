@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import FinanceDataReader as fdr
 import zerohertzLib as zz
 
-SLACK = os.environ.get("SLACK_BOT_TOKEN")
+SLACK = os.environ.get("SLACK")
 
 
 if __name__ == "__main__":
