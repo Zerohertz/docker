@@ -18,6 +18,7 @@ if __name__ == "__main__":
         timeout=30,
     )
     try:
+        zz.plot.font(kor=True)
         now = datetime.now()
         start_day = now - timedelta(days=365)
         start_day = start_day.strftime("%Y%m%d")

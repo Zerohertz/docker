@@ -44,6 +44,7 @@ if __name__ == "__main__":
         code = "AAPL"
     slack = zz.api.SlackBot(SLACK, channel, name="Error", icon_emoji="warning")
     try:
+        zz.plot.font(kor=True)
         if not main(channel, code):
             system = zz.api.SlackBot(SLACK, channel, name="System", icon_emoji="bank")
             system.message("> :zzz: 오늘은 휴장일 입니다. :zzz:")
