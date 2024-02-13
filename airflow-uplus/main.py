@@ -143,12 +143,14 @@ def main(slack):
     # 결제
     browser.click_xpath("/html/body/div[6]/div[1]/div/div/footer/button[2]")
     slack.message(f":bell: [결제 :o:] 결제 완료!:\t{int(PRICE):,.0f}원")
-    slack.message(f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE):,.0f}원")
+    slack.message(
+        f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE):,.0f}원"
+    )
     return None
 
 
 if __name__ == "__main__":
-    slack = zz.api.SlackBot(SLACK, "uplus", name="U+", icon_emoji="iphone")
+    slack = zz.api.SlackBot(SLACK, "uplus", name="U+", icon_emoji="iphone", timeout=30)
     try:
         main(slack)
     except Exception as e:

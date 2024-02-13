@@ -1,4 +1,5 @@
 import os
+import time
 import traceback
 from datetime import datetime, timedelta
 
@@ -53,7 +54,9 @@ def main(slack, data_path, test_code, dim):
         thread_ts = list(response.json()["file"]["shares"]["private"].values())[0][0][
             "ts"
         ]
+        time.sleep(3)
         slack.file(path_balance, thread_ts)
+        time.sleep(3)
         slack.file(
             path_portfolio,
             thread_ts,
@@ -77,8 +80,10 @@ if __name__ == "__main__":
         channel=channel,
         name="Balance",
         icon_emoji="moneybag",
+        timeout=30,
     )
     try:
+        zz.plot.font(kor=True)
         if not main(slack, data_path, code, dim):
             slack.message("> :zzz: 오늘은 휴장일 입니다. :zzz:")
     except Exception as e:

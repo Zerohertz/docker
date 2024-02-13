@@ -86,7 +86,11 @@ def main(tar, slack):
 if __name__ == "__main__":
     ga4_service = get_ga4_service(KEY)
     slack = zz.api.SlackBot(
-        SLACK, "google_analytics_4", name="Google Analytics 4", icon_emoji="bar_chart"
+        SLACK,
+        "google_analytics_4",
+        name="Google Analytics 4",
+        icon_emoji="bar_chart",
+        timeout=30,
     )
     tar = {
         "city": "City",
@@ -95,6 +99,7 @@ if __name__ == "__main__":
         "pageReferrer": "Page Referrer",
     }
     try:
+        zz.plot.font(kor=True)
         main(tar, slack)
     except Exception as e:
         response = slack.message(

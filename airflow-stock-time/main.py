@@ -72,7 +72,9 @@ if __name__ == "__main__":
             channel=channel,
             name="Balance",
             icon_emoji="moneybag",
+            timeout=30,
         )
+        zz.plot.font(kor=True)
         main(slack, data_path, dim)
     except Exception as e:
         response = slack.message(
