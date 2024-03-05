@@ -7,12 +7,11 @@ from matplotlib import pyplot as plt
 from matplotlib import ticker
 
 SLACK = os.environ.get("SLACK")
-KOR = bool(int(os.environ.get("KOR")))
 
 
-def main(slack, data_path, dim):
+def main(slack):
     try:
-        data = zz.util.Json(f"{data_path}.json").data
+        data = zz.util.Json("stock/balance.json").data
     except FileNotFoundError:
         slack.message("Balance: NULL", True)
         return None
@@ -36,7 +35,7 @@ def main(slack, data_path, dim):
         xdata,
         ydata,
         xlab="",
-        ylab=f"Asset [{dim}]",
+        ylab=f"Asset [₩]",
         stacked=True,
         title="",
         colors="Set2",
@@ -59,23 +58,15 @@ def main(slack, data_path, dim):
 
 if __name__ == "__main__":
     try:
-        if KOR:
-            channel = "stock_kor_time"
-            data_path = "stock/stock-kor"
-            dim = "₩"
-        else:
-            channel = "stock_ovs_time"
-            data_path = "stock/stock-ovs"
-            dim = "$"
         slack = zz.api.SlackBot(
             SLACK,
-            channel=channel,
+            channel="stock_time",
             name="Balance",
             icon_emoji="moneybag",
             timeout=30,
         )
         zz.plot.font(kor=True)
-        main(slack, data_path, dim)
+        main(slack)
     except Exception as e:
         response = slack.message(
             ":warning:" * 3

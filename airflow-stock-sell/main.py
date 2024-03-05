@@ -10,6 +10,7 @@ TOP = int(os.environ.get("TOP"))
 SLACK = os.environ.get("SLACK")
 MP_NUM = int(os.environ.get("MP_NUM"))
 KOR = bool(int(os.environ.get("KOR")))
+ACCOUNT = os.environ.get("ACCOUNT")
 
 
 def main(channel, test_code):
@@ -29,7 +30,7 @@ def main(channel, test_code):
         icon_emoji="chart_with_upwards_trend",
         mp_num=MP_NUM,
         kor=KOR,
-        path="stock",
+        path=f"stock/{ACCOUNT}",
     )
     qsb.sell()
     return True
