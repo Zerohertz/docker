@@ -23,6 +23,7 @@ def _merge(balance_1, balance_2, exchange=None):
         for key, value in balance_2.items():
             balance_2.balance["stock"][key][1] = value[1] * exchange
             balance_2.balance["stock"][key][2] = value[2] * exchange
+            balance_2.balance["stock"][key][-1] = value[-1] * exchange
         balance_2.balance["cash"] = balance_2.balance["cash"] * exchange
     balance_1.balance["stock"] = dict(list(balance_1.items()) + list(balance_2.items()))
     balance_1.balance["cash"] += balance_2.balance["cash"]
@@ -32,14 +33,16 @@ def _merge(balance_1, balance_2, exchange=None):
 def _balance():
     exchange = _exchange()
     try:
-        balance = zz.quant.Balance(path="ISA")
+        balance = zz.quant.Balance(path="stock/ISA")
     except KeyError:
         balance = None
     if balance is None:
-        balance = zz.quant.Balance(path="NORMAL")
+        balance = zz.quant.Balance(path="stock/NORMAL")
     else:
-        balance = _merge(balance, zz.quant.Balance(path="NORMAL"))
-    balance = _merge(balance, zz.quant.Balance(path="NORMAL", kor=False), exchange)
+        balance = _merge(balance, zz.quant.Balance(path="stock/NORMAL"))
+    balance = _merge(
+        balance, zz.quant.Balance(path="stock/NORMAL", kor=False), exchange
+    )
     balance.balance["stock"] = dict(
         sorted(
             balance.balance["stock"].items(),
