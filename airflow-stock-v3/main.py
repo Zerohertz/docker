@@ -54,15 +54,6 @@ def _balance():
 
 
 def main(slack):
-    now = datetime.now()
-    test_start_day = now - timedelta(days=30)
-    test_data_kor = fdr.DataReader("005930", test_start_day)
-    test_data_ovs = fdr.DataReader("AAPL", test_start_day)
-    if (
-        test_data_kor.index[-1].day != now.day
-        and test_data_ovs.index[-1].day != now.day
-    ):
-        return False
     try:
         data = zz.util.Json("stock/balance.json").data
     except:
@@ -105,7 +96,6 @@ def main(slack):
             path_portfolio,
             thread_ts,
         )
-    return True
 
 
 if __name__ == "__main__":
@@ -118,8 +108,7 @@ if __name__ == "__main__":
     )
     try:
         zz.plot.font(kor=True)
-        if not main(slack):
-            slack.message("> :zzz: 오늘은 휴장일 입니다. :zzz:")
+        main(slack)
     except Exception as e:
         response = slack.message(
             ":warning:" * 3

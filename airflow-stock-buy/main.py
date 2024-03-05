@@ -17,7 +17,7 @@ def main(channel, test_code):
     now = datetime.now()
     test_start_day = now - timedelta(days=30)
     test_data = fdr.DataReader(test_code, test_start_day)
-    if test_data.index[-1].day != now.day:
+    if KOR and test_data.index[-1].day != now.day:
         return False
     qsb = zz.quant.QuantSlackBotFDR(
         SYMBOLS,
