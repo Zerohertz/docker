@@ -123,10 +123,12 @@ def main(slack):
     try:
         tmp = browser.get_info()
     except:
-        slack.message(browser.get_status())
-        return None
+        tmp = browser.get_status()
     if "납부할 요금이 없습니다." in tmp:
-        slack.message(f":bell: [결제 :x:]: {tmp}")
+        slack.message(":bell: [결제 :x:]: 납부할 요금이 없습니다.")
+        return None
+    if "5,999" in tmp:
+        slack.message(":bell: [결제 :x:]: 이번달 납부하실 금액은 5,999원입니다.")
         return None
     tmp = browser.get_price()
     # 결제 가격

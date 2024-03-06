@@ -10,6 +10,8 @@ from matplotlib import pyplot as plt
 from matplotlib import ticker
 
 SLACK = os.environ.get("SLACK")
+NORMAL = os.environ.get("NORMAL")
+ISA = os.environ.get("ISA")
 
 
 def _exchange():
@@ -33,15 +35,15 @@ def _merge(balance_1, balance_2, exchange=None):
 def _balance():
     exchange = _exchange()
     try:
-        balance = zz.quant.Balance(path="stock/ISA")
+        balance = zz.quant.Balance(ISA, path="stock")
     except KeyError:
         balance = None
     if balance is None:
-        balance = zz.quant.Balance(path="stock/NORMAL")
+        balance = zz.quant.Balance(NORMAL, path="stock")
     else:
-        balance = _merge(balance, zz.quant.Balance(path="stock/NORMAL"))
+        balance = _merge(balance, zz.quant.Balance(NORMAL, path="stock"))
     balance = _merge(
-        balance, zz.quant.Balance(path="stock/NORMAL", kor=False), exchange
+        balance, zz.quant.Balance(NORMAL, path="stock", kor=False), exchange
     )
     balance.balance["stock"] = dict(
         sorted(

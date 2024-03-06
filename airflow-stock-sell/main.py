@@ -20,7 +20,7 @@ def main(channel, test_code):
     if KOR and test_data.index[-1].day != now.day:
         return False
     qsb = zz.quant.QuantSlackBotKI(
-        [],
+        ACCOUNT,
         start_day=START_DAY,
         ohlc="Close",
         top=TOP,
@@ -30,7 +30,7 @@ def main(channel, test_code):
         icon_emoji="chart_with_upwards_trend",
         mp_num=MP_NUM,
         kor=KOR,
-        path=f"stock/{ACCOUNT}",
+        path=f"stock",
     )
     qsb.sell()
     return True
