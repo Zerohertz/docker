@@ -64,10 +64,10 @@ def make_barh(title, response, slack, thread_ts):
     zz.plot.figure((max(15, max_ylab // 3), max(10, 3 + int(len(peop) / 2.4))))
     plt.subplot(1, 2, 1)
     zz.plot.barh(
-        peop, "Number of People", "People", title, rot=0, per=False, save=False
+        peop, "Number of People", "People", title=title, rot=0, per=False, save=False
     )
     plt.subplot(1, 2, 2)
-    zz.plot.barh(time, "Time [sec]", "Time", title, rot=0, per=False, save=False)
+    zz.plot.barh(time, "Time [sec]", "Time", title=title, rot=0, per=False, save=False)
     path = zz.plot.savefig(title, 100)
     slack.file(path, thread_ts=thread_ts)
 
