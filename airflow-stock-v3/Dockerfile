@@ -4,6 +4,6 @@ WORKDIR /app
 COPY main.py .
 
 RUN pip install --no-cache-dir pytz
-RUN pip install --no-cache-dir zerohertzLib[quant]==0.9.2
+RUN pip install --no-cache-dir zerohertzLib[quant]==0.9.4
 
 CMD ["python3", "main.py"]
