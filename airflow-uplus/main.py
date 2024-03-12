@@ -75,7 +75,7 @@ class Browser:
     def get_price(self):
         element = self.browser.find_element(
             "xpath",
-            "/html/body/div[6]/div[1]/div/div/div/div/div[1]/div/div/div[1]/div/p/strong",  # 이번달 납부하실 금액은 (**,***)원입니다.
+            "/html/body/div[7]/div[1]/div/div/div/div/div[1]/div/div/div[1]/div/p/strong",  # 이번달 납부하실 금액은 (**,***)원입니다.
         )
         return int(element.text[:-1].replace(",", ""))
 
@@ -143,7 +143,7 @@ def main(slack):
     slack.message(f":bell: [결제 :o:] 결제 예정 금액:\t{int(PRICE):,.0f}원")
     browser.info(PRICE)
     # 결제
-    browser.click_xpath("/html/body/div[6]/div[1]/div/div/footer/button[2]")
+    browser.click_xpath("/html/body/div[7]/div[1]/div/div/footer/button[2]")
     slack.message(f":bell: [결제 :o:] 결제 완료!:\t{int(PRICE):,.0f}원")
     slack.message(
         f":bell: [결제 :o:] 결제 후 결제 예정 금액:\t{tmp - int(PRICE):,.0f}원"
