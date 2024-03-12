@@ -16,7 +16,7 @@ ISA = os.environ.get("ISA")
 
 def _exchange():
     now = datetime.now()
-    data = fdr.DataReader("USD/KRW", now - timedelta(days=1))
+    data = fdr.DataReader("USD/KRW", now - timedelta(days=10))
     return data.Close[-1]
 
 
