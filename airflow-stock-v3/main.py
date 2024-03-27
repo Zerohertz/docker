@@ -41,9 +41,9 @@ def _balance():
     if balance is None:
         balance = zz.quant.Balance(NORMAL, path="stock/NORMAL")
     else:
-        balance = _merge(balance, zz.quant.Balance(NORMAL, path="stock"))
+        balance = _merge(balance, zz.quant.Balance(NORMAL, path="stock/NORMAL"))
     balance = _merge(
-        balance, zz.quant.Balance(NORMAL, path="stock", kor=False), exchange
+        balance, zz.quant.Balance(NORMAL, path="stock/NORMAL", kor=False), exchange
     )
     balance.balance["stock"] = dict(
         sorted(
