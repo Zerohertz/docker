@@ -10,7 +10,8 @@ TOP = int(os.environ.get("TOP"))
 SLACK = os.environ.get("SLACK")
 MP_NUM = int(os.environ.get("MP_NUM"))
 KOR = bool(int(os.environ.get("KOR")))
-ACCOUNT = os.environ.get("ACCOUNT")
+NORMAL = os.environ.get("NORMAL")
+ISA = os.environ.get("ISA")
 
 
 def main(channel, test_code):
@@ -19,20 +20,25 @@ def main(channel, test_code):
     test_data = fdr.DataReader(test_code, test_start_day)
     if KOR and test_data.index[-1].day != now.day:
         return False
-    qsb = zz.quant.QuantSlackBotKI(
-        ACCOUNT,
-        start_day=START_DAY,
-        ohlc="Close",
-        top=TOP,
-        token=SLACK,
-        channel=channel,
-        name="Sell",
-        icon_emoji="chart_with_upwards_trend",
-        mp_num=MP_NUM,
-        kor=KOR,
-        path=f"stock",
-    )
-    qsb.sell()
+    if KOR:
+        ACCOUNT = {"NORMAL": NORMAL, "ISA": ISA}
+    else:
+        ACCOUNT = {"NORAML": NORMAL}
+    for name, account in ACCOUNT.items():
+        qsb = zz.quant.QuantSlackBotKI(
+            account,
+            start_day=START_DAY,
+            ohlc="Close",
+            top=TOP,
+            token=SLACK,
+            channel=channel,
+            name="Sell",
+            icon_emoji="chart_with_upwards_trend",
+            mp_num=MP_NUM,
+            kor=KOR,
+            path=f"stock/{name}",
+        )
+        qsb.sell()
     return True
 
 

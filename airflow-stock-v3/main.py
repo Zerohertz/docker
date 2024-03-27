@@ -35,11 +35,11 @@ def _merge(balance_1, balance_2, exchange=None):
 def _balance():
     exchange = _exchange()
     try:
-        balance = zz.quant.Balance(ISA, path="stock")
+        balance = zz.quant.Balance(ISA, path="stock/ISA")
     except KeyError:
         balance = None
     if balance is None:
-        balance = zz.quant.Balance(NORMAL, path="stock")
+        balance = zz.quant.Balance(NORMAL, path="stock/NORMAL")
     else:
         balance = _merge(balance, zz.quant.Balance(NORMAL, path="stock"))
     balance = _merge(
