@@ -23,7 +23,7 @@ def main(channel, test_code):
     if KOR:
         ACCOUNT = {"NORMAL": NORMAL, "ISA": ISA}
     else:
-        ACCOUNT = {"NORAML": NORMAL}
+        ACCOUNT = {"NORMAL": NORMAL}
     for name, account in ACCOUNT.items():
         qsb = zz.quant.QuantSlackBotKI(
             account,
