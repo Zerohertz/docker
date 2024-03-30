@@ -4,7 +4,7 @@ USER root
 RUN apt-get update \
     && apt-get install -y python3 python3-pip
 
-RUN pip install zerohertzLib[api]==0.9.6
+RUN pip install zerohertzLib[api]==0.9.8
 RUN pip install selenium
 
 COPY main.py /app/main.py

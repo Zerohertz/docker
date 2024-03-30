@@ -73,7 +73,7 @@ def main(slack):
     zz.plot.barv(
         data_bar,
         xlab="",
-        ylab=f"Profit and Loss (P&L) [₩]",
+        ylab="Profit and Loss (P&L) [₩]",
         title="",
         rot=45,
         per=False,
