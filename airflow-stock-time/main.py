@@ -35,7 +35,7 @@ def main(slack):
         xdata,
         ydata,
         xlab="",
-        ylab=f"Asset [₩]",
+        ylab="Asset [₩]",
         stacked=True,
         title="",
         colors="Set2",
