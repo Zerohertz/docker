@@ -76,7 +76,8 @@ def main(slack):
         ylab="Profit and Loss (P&L) [₩]",
         title="",
         rot=45,
-        per=False,
+        dim="",
+        dimsize=16,
         save=False,
     )
     plt.gca().yaxis.set_major_formatter(
