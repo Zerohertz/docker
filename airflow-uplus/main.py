@@ -165,4 +165,4 @@ if __name__ == "__main__":
             + str(e)
             + "\n```",
         )
-        slack.message(traceback.format_exc(), True, response.json()["ts"])
+        slack.message(traceback.format_exc(), True, response.get("ts"))

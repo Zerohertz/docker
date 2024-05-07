@@ -3,6 +3,6 @@ FROM python:3.8
 WORKDIR /app
 COPY main.py .
 
-RUN pip install --no-cache-dir zerohertzLib[quant]==1.0.5
+RUN pip install --no-cache-dir zerohertzLib[quant]==1.0.7
 
 CMD ["python3", "main.py"]

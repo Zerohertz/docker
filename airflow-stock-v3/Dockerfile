@@ -5,6 +5,6 @@ COPY main.py .
 
 RUN pip install --no-cache-dir \
     pytz \
-    zerohertzLib[quant]==1.0.5
+    zerohertzLib[quant]==1.0.7
 
 CMD ["python3", "main.py"]

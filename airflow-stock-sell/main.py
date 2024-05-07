@@ -3,7 +3,6 @@ import traceback
 from datetime import datetime, timedelta
 
 import FinanceDataReader as fdr
-
 import zerohertzLib as zz
 
 START_DAY = os.environ.get("START_DAY")
@@ -64,4 +63,4 @@ if __name__ == "__main__":
             + str(e)
             + "\n```",
         )
-        slack.message(traceback.format_exc(), True, response.json()["ts"])
+        slack.message(traceback.format_exc(), True, response.get("ts"))

@@ -49,7 +49,7 @@ if __name__ == "__main__":
         message += f"\t:dollar: Q1 대비 현재 시세: {year_q1:.2f}%\n"
         response = slack.message(message)
         time.sleep(3)
-        slack.file(path, response.json()["ts"])
+        slack.file(path, response.get("ts"))
     except Exception as error:
         response = slack.message(
             ":warning:" * 3
@@ -60,4 +60,4 @@ if __name__ == "__main__":
             + str(error)
             + "\n```",
         )
-        slack.message(traceback.format_exc(), True, response.json()["ts"])
+        slack.message(traceback.format_exc(), True, response.get("ts"))
