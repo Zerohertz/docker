@@ -77,7 +77,7 @@ def main(tar, slack):
         day = "day"
     else:
         day = "days"
-    thread_ts = slack.message(f"> :rocket: {PER}{day} Report").json()["ts"]
+    thread_ts = slack.message(f"> :rocket: {PER}{day} Report").get("ts")
     for t, tit in tar.items():
         response = get_data(t)
         make_barh(tit, response, slack, thread_ts)
