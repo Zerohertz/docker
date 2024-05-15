@@ -1,0 +1,283 @@
+repo_name: Zerohertz/docker
+report_id: e3a94cfb8f61830d43a2221b3cbcfc25
+version: 0.1
+repo_type: Public
+timestamp: '2024-05-15T12:59:43+00:00'
+requested_by: Zerohertz
+provider: github
+branch: main
+detected_tools_count: 22
+tools:
+- name: Python
+  description: A clear and powerful object-oriented programming language, comparable
+    to Perl, Ruby, Scheme, or Java.
+  website_url: https://www.python.org
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/993/pUBY5pVj.png
+  detection_source_url: https://github.com/Zerohertz/docker
+  detection_source: Repo Metadata
+- name: FastAPI
+  description: A high performance, easy to learn, fast to code, ready for production
+    web framework
+  website_url: https://fastapi.tiangolo.com/
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Microframeworks (Backend)
+  image_url: https://img.stackshare.io/service/25014/default_f6ff39141b468e832d1bc59fc98a060df604d44d.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/model-serving/src/client/requirements.txt
+  detection_source: model-serving/src/client/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-31 01:35:31.000000000 Z
+- name: Matplotlib
+  description: A plotting library for the Python programming language
+  website_url: http://matplotlib.org
+  open_source: false
+  hosted_saas: false
+  category: Libraries
+  sub_category: Charting Libraries
+  image_url: https://img.stackshare.io/service/2993/2DZC4KaA_400x400.jpg
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/airflow-continuous-training/requirements.txt
+  detection_source: airflow-continuous-training/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-28 01:51:57.000000000 Z
+- name: Protobuf
+  description: Google's data interchange format
+  website_url: https://developers.google.com/protocol-buffers/
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Serialization Frameworks
+  image_url: https://img.stackshare.io/service/4393/ma2jqJKH_400x400.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/model-serving/src/client/requirements.txt
+  detection_source: model-serving/src/client/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-31 01:35:31.000000000 Z
+- name: Docker
+  description: Enterprise Container Platform for High-Velocity Innovation.
+  website_url: https://www.docker.com/
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Virtual Machine Platforms & Containers
+  image_url: https://img.stackshare.io/service/586/n4u37v9t_400x400.png
+  detection_source_url: https://github.com/Zerohertz/docker
+  detection_source: Repo Metadata
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/Zerohertz/docker
+  detection_source: Repo Metadata
+- name: GitHub Actions
+  description: Automate your workflow from idea to production
+  website_url: https://github.com/features/actions
+  open_source: false
+  hosted_saas: true
+  category: Build, Test, Deploy
+  sub_category: Continuous Integration
+  image_url: https://img.stackshare.io/service/11563/actions.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/.github/workflows/ci.yaml
+  detection_source: ".github/workflows/ci.yaml"
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-11-28 15:36:08.000000000 Z
+- name: PyPI
+  description: A repository of software for the Python programming language
+  website_url: https://pypi.org/
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Hosted Package Repository
+  image_url: https://img.stackshare.io/service/12572/-RIWgodF_400x400.jpg
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/model-serving/src/client/requirements.txt
+  detection_source: model-serving/src/client/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-31 01:35:31.000000000 Z
+- name: OpenCV
+  description: Open Source Computer Vision Library
+  website_url: http://opencv.org/
+  open_source: true
+  hosted_saas: false
+  category: Assets and Media
+  sub_category: Image Processing and Management
+  image_url: https://img.stackshare.io/service/1293/opencv-logo-64x64.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/model-serving/src/client/requirements.txt
+  detection_source: model-serving/src/client/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-31 01:35:31.000000000 Z
+- name: NumPy
+  description: Fundamental package for scientific computing with Python
+  website_url: http://www.numpy.org/
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Data Science Tools
+  image_url: https://img.stackshare.io/service/2179/default_332f874a2edb2686f578aa6389313efcea1eec41.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/model-serving/src/client/requirements.txt
+  detection_source: model-serving/src/client/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-31 01:35:31.000000000 Z
+- name: Shell
+  description: A shell is a text-based terminal, used for manipulating programs and
+    files. Shell scripts typically manage program execution.
+  website_url: https://en.wikipedia.org/wiki/Shell_script
+  open_source: false
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/4631/default_c2062d40130562bdc836c13dbca02d318205a962.png
+  detection_source_url: https://github.com/Zerohertz/docker
+  detection_source: Repo Metadata
+- name: google
+  description: Python bindings to the Google search engine
+  package_url: https://pypi.org/project/google
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20708/default_e885869a0d29385c2822600e997cabd6d7375b02.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/model-serving/src/client/requirements.txt
+  detection_source: model-serving/src/client/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-31 01:35:31.000000000 Z
+- name: google-api-python-client
+  description: Google API Client Library for Python
+  package_url: https://pypi.org/project/google-api-python-client
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19897/default_4343f8bba4f6051641ffca8b4fbe9b099402c84d.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/airflow-ga4/requirements.txt
+  detection_source: airflow-ga4/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-09-21 02:26:36.000000000 Z
+- name: grpcio
+  description: HTTP/2-based RPC framework
+  package_url: https://pypi.org/project/grpcio
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19903/default_1d0eb6da6bdd342bb15f73d8f1721516ebacd1dc.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/model-serving/src/client/requirements.txt
+  detection_source: model-serving/src/client/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-31 01:35:31.000000000 Z
+- name: opencv-python
+  description: Wrapper package for OpenCV python bindings
+  package_url: https://pypi.org/project/opencv-python
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/pypi/image.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/model-serving/src/client/requirements.txt
+  detection_source: model-serving/src/client/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-31 01:35:31.000000000 Z
+- name: openpyxl
+  description: A Python library to read/write Excel 2010 xlsx/xlsm files
+  package_url: https://pypi.org/project/openpyxl
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19895/default_4343f8bba4f6051641ffca8b4fbe9b099402c84d.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/airflow-stock-v1/requirements.txt
+  detection_source: airflow-stock-v1/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-11-28 02:07:48.000000000 Z
+- name: packaging
+  description: Core utilities for Python packages
+  package_url: https://pypi.org/project/packaging
+  license: BSD-3-Clause,Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19894/default_f716e4bc541a9eb6e3f5b7a20d7c35355075b0b4.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/model-serving/src/client/requirements.txt
+  detection_source: model-serving/src/client/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-31 01:35:31.000000000 Z
+- name: pandas
+  description: Powerful data structures for data analysis
+  package_url: https://pypi.org/project/pandas
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19837/default_85689b353a3a9409328e253ea28d859d29151e0c.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/airflow-stock-v1/requirements.txt
+  detection_source: airflow-stock-v1/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-11-28 02:07:48.000000000 Z
+- name: psycopg2
+  description: Psycopg2 - Python-PostgreSQL Database Adapter
+  package_url: https://pypi.org/project/psycopg2
+  license: BSD-3-Clause-Attribution
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20416/default_64aa60b33468d1d28611966765867676f6303b64.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/airflow-continuous-training/requirements.txt
+  detection_source: airflow-continuous-training/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-28 11:02:47.000000000 Z
+- name: requests
+  description: Python HTTP for Humans
+  package_url: https://pypi.org/project/requests
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19826/default_d7c684bf2673f008a9f02ac93901229297a22d7e.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/airflow-continuous-training/requirements.txt
+  detection_source: airflow-continuous-training/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-08-28 04:49:47.000000000 Z
+- name: scikit-learn
+  description: A set of python modules for machine learning and data mining
+  package_url: https://pypi.org/project/scikit-learn
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19898/default_4343f8bba4f6051641ffca8b4fbe9b099402c84d.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/airflow-continuous-training/requirements.txt
+  detection_source: airflow-continuous-training/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-12-01 05:09:02.000000000 Z
+- name: selenium
+  description: Python bindings for Selenium
+  package_url: https://pypi.org/project/selenium
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19869/default_d05f6f09935776629f62e8aed365805502c14921.png
+  detection_source_url: https://github.com/Zerohertz/docker/blob/main/airflow-stock-v1/requirements.txt
+  detection_source: airflow-stock-v1/requirements.txt
+  last_updated_by: Zerohertz
+  last_updated_on: 2023-10-30 06:56:17.000000000 Z
