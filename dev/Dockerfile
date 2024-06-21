@@ -43,6 +43,9 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && \
     sudo add-apt-repository -y ppa:neovim-ppa/unstable && sudo apt-get update && \
     sudo apt-get install -y neovim && \
     git clone https://github.com/Zerohertz/nvim ~/.config/nvim && \
-    nvim --headless +qa && nvim --headless +'TSUpdateSync' +'sleep 20' +qa
+    nvim --headless +qa && nvim --headless +'TSUpdateSync' +'sleep 20' +qa && \
+    echo 'export SHELL=/bin/zsh' >> ~/.zshrc
+
+WORKDIR /home/zerohertz/workspace
 
 CMD ["zsh"]
