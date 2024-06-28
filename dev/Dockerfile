@@ -1,51 +1,66 @@
 FROM ubuntu:20.04
 
+LABEL maintainer="Zerohertz <ohg3417@gmail.com>"
+LABEL description="Zerohertz's Dev Environment"
+LABEL license="MIT"
+
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN groupadd -g 1000 zerohertz && useradd -r -u 1000 -g zerohertz zerohertz
-WORKDIR /home/zerohertz
-
-RUN apt-get update && \
-    apt-get install -y sudo locales curl wget unzip git software-properties-common tree && \
+RUN groupadd -g 1000 zerohertz && useradd -r -u 1000 -g zerohertz zerohertz && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
+    apt-get install -y sudo locales curl wget unzip git software-properties-common tree python3-opencv && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
     echo "Asia/Seoul" > /etc/timezone && \
     ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
-    echo "zerohertz ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-RUN chown -R zerohertz:zerohertz /home/zerohertz
-USER zerohertz
-
-# ZSH
-RUN curl -sL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/ZSH/install.sh | bash && \
-    curl https://raw.githubusercontent.com/Zerohertz/etc/master/Util/ZSH/.zshrc > $HOME/.zshrc && sed -i '/kube/d' $HOME/.zshrc && \
-    sudo chsh -s $(which zsh) && ~/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f
-
-# Python
-RUN sudo add-apt-repository ppa:deadsnakes/ppa && sudo apt-get update && \
-    sudo apt-get install -y python3.11 python3.11-venv && \
-    sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 && \
-    curl -sS https://bootstrap.pypa.io/get-pip.py | sudo python3.11 && \
-    sudo update-alternatives --install /usr/bin/pip pip /usr/local/bin/pip3.11 1 && \
-    pip install zerohertzLib[all]
+    echo "zerohertz ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    mkdir /home/zerohertz && chown -R zerohertz:zerohertz /home/zerohertz
 
 # C++
-RUN sudo sudo apt-get install -y build-essential gcc
+RUN apt-get install -y build-essential gcc
 
 # Go
 RUN wget https://go.dev/dl/go1.22.4.linux-amd64.tar.gz && \
-    rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz && rm go1.22.4.linux-amd64.tar.gz
+    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz && rm go1.22.4.linux-amd64.tar.gz
 
 # Neovim
-RUN curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && \
-    sudo apt-get install -y python3-apt python3-launchpadlib nodejs && \
-    sudo add-apt-repository -y ppa:neovim-ppa/unstable && sudo apt-get update && \
-    sudo apt-get install -y neovim && \
-    git clone https://github.com/Zerohertz/nvim ~/.config/nvim && \
-    nvim --headless +qa && nvim --headless +'TSUpdateSync' +'sleep 20' +qa && \
-    echo 'export SHELL=/bin/zsh' >> ~/.zshrc
+COPY mason.sh /home/zerohertz/mason.sh
+RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz && \
+    tar -xzf nvim-linux64.tar.gz && \
+    cp -r nvim-linux64/* /usr/local/ && \
+    rm nvim-linux64.tar.gz && rm -rf nvim-linux64 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y ripgrep fish nodejs luarocks && \
+    npm install -g neovim && \
+    chmod +x /home/zerohertz/mason.sh
+
+USER zerohertz
+
+# ZSH
+RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/ZSH/install.sh | bash && \
+    curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/ZSH/.zshrc > $HOME/.zshrc && sed -i '/kube/d' $HOME/.zshrc && \
+    sudo chsh -s $(which zsh) && $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
+    echo 'export SHELL=/bin/zsh' >> $HOME/.zshrc
+
+# Python
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py311_24.5.0-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
+    chmod +x $HOME/miniconda.sh && \
+    $HOME/miniconda.sh -b -p $HOME/miniconda && \
+    rm $HOME/miniconda.sh && \
+    $HOME/miniconda/bin/conda init zsh
+
+# Neovim
+RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir neovim && \
+    git clone https://github.com/Zerohertz/nvim $HOME/.config/nvim && \
+    zsh -c "source $HOME/.zshrc && \
+    nvim --headless +qa && \
+    /home/zerohertz/mason.sh && rm /home/zerohertz/mason.sh && \
+    nvim --headless +TSUpdateSync '+sleep 20' +qa"
+
+# zerohertzLib
+RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir zerohertzLib[all]
 
 WORKDIR /home/zerohertz/workspace
-
 CMD ["zsh"]
