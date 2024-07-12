@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN groupadd -g 1000 zerohertz && useradd -r -u 1000 -g zerohertz zerohertz && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
-    apt-get install -y sudo locales curl wget unzip git software-properties-common tree python3-opencv && \
+    apt-get install -y sudo locales curl wget unzip git software-properties-common tree tmux python3-opencv && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
     echo "Asia/Seoul" > /etc/timezone && \
@@ -23,6 +23,9 @@ RUN apt-get install -y build-essential gcc
 # Go
 RUN wget https://go.dev/dl/go1.22.4.linux-amd64.tar.gz && \
     rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz && rm go1.22.4.linux-amd64.tar.gz
+
+# Java
+RUN apt-get install -y openjdk-17-jdk
 
 # Neovim
 COPY mason.sh /home/zerohertz/mason.sh
@@ -39,10 +42,9 @@ RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.
 USER zerohertz
 
 # ZSH
-RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/ZSH/install.sh | bash && \
-    curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/ZSH/.zshrc > $HOME/.zshrc && sed -i '/kube/d' $HOME/.zshrc && \
+RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/sh/install_zsh.sh | bash && \
     sudo chsh -s $(which zsh) && $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
-    echo 'export SHELL=/bin/zsh' >> $HOME/.zshrc
+    curl -fsSL https://raw.githubusercontent.com/Zerohertz/dotfiles/main/.tmux.conf > $HOME/.tmux.conf
 
 # Python
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py311_24.5.0-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
