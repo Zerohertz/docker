@@ -44,7 +44,8 @@ USER zerohertz
 # ZSH
 RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/sh/install_zsh.sh | bash && \
     sudo chsh -s $(which zsh) && $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
-    curl -fsSL https://raw.githubusercontent.com/Zerohertz/dotfiles/main/.tmux.conf > $HOME/.tmux.conf
+    git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles --recurse-submodules && cd $HOME/dotfiles && mkdir -p $HOME/.config && \
+    make
 
 # Python
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py311_24.5.0-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
@@ -55,7 +56,6 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py311_24.5.0-0-Linux-x86
 
 # Neovim
 RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir neovim && \
-    git clone https://github.com/Zerohertz/nvim $HOME/.config/nvim && \
     zsh -c "source $HOME/.zshrc && \
     nvim --headless +qa && \
     /home/zerohertz/mason.sh && rm /home/zerohertz/mason.sh && \
