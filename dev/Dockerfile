@@ -44,7 +44,7 @@ USER zerohertz
 # ZSH
 RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/sh/install_zsh.sh | bash && \
     sudo chsh -s $(which zsh) && $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
-    git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles --recurse-submodules && cd $HOME/dotfiles && mkdir -p $HOME/.config && \
+    mkdir -p $HOME/.config && git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles --recurse-submodules && cd $HOME/dotfiles  && \
     make
 
 # Python
