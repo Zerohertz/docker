@@ -25,5 +25,5 @@ packages=(
 )
 
 for package in "${packages[@]}"; do
-    nvim --headless +":MasonInstall $package --force" +qa
+    nvim --headless +"lua require('mason').setup()" +":MasonInstall $package --force" +qa
 done
