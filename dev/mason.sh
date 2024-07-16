@@ -12,6 +12,7 @@ packages=(
     hadolint
     impl
     isort
+    java-test
     jdtls
     json-lsp
     lua-language-server
