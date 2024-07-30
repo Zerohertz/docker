@@ -3,6 +3,9 @@
 packages=(
     black
     clangd
+    cmakelang
+    cmakelint
+    codelldb
     docker-compose-language-service
     dockerfile-language-server
     gofumpt
@@ -10,6 +13,7 @@ packages=(
     gomodifytags
     gopls
     hadolint
+    helm-ls
     impl
     isort
     java-test
@@ -17,11 +21,17 @@ packages=(
     json-lsp
     lua-language-server
     markdownlint
+    neocmakelsp
     prettier
     pyright
     ruff-lsp
     shfmt
+    sqlfluff
     stylua
+    taplo
+    terraform-ls
+    tflint
+    vtsls
     yaml-language-server
 )
 

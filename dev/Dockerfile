@@ -8,26 +8,36 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN groupadd -g 1000 zerohertz && useradd -r -u 1000 -g zerohertz zerohertz && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
-    apt-get install -y sudo locales curl wget unzip git software-properties-common tree tmux python3-opencv && \
+    apt-get install -y sudo locales curl wget unzip git gnupg software-properties-common tree tmux python3-opencv && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
     echo "Asia/Seoul" > /etc/timezone && \
     ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     echo "zerohertz ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-    mkdir /home/zerohertz && chown -R zerohertz:zerohertz /home/zerohertz
+    mkdir -p /home/zerohertz/workspace && chown -R zerohertz:zerohertz /home/zerohertz
 
-# C++
+# ----------------------- C++ ----------------------- #
 RUN apt-get install -y build-essential gcc
 
-# Go
+# ----------------------- Go ----------------------- #
 RUN wget https://go.dev/dl/go1.22.4.linux-amd64.tar.gz && \
     rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz && rm go1.22.4.linux-amd64.tar.gz
 
-# Java
+# ----------------------- Java ----------------------- #
 RUN apt-get install -y openjdk-17-jdk
 
-# Neovim
+# ----------------------- Terraform ----------------------- #
+RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
+    gpg --dearmor | \
+    tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+    tee /etc/apt/sources.list.d/hashicorp.list && \
+    apt-get update && \
+    apt-get install -y terraform
+
+# ----------------------- Neovim ----------------------- #
 COPY mason.sh /home/zerohertz/mason.sh
 RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz && \
     tar -xzf nvim-linux64.tar.gz && \
@@ -39,29 +49,45 @@ RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.
     npm install -g neovim && \
     chmod +x /home/zerohertz/mason.sh
 
+# ----------------------- Lazygit ----------------------- #
+RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*') && \
+    curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" && \
+    tar xf lazygit.tar.gz lazygit && \
+    install lazygit /usr/local/bin && rm lazygit*
+
 USER zerohertz
 
-# ZSH
+# ----------------------- ZSH ----------------------- #
 RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/sh/install_zsh.sh | bash && \
     sudo chsh -s $(which zsh) && $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
     mkdir -p $HOME/.config && git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles --recurse-submodules && cd $HOME/dotfiles  && \
     make
 
-# Python
+# ----------------------- Rust ----------------------- #
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    zsh -c "source $HOME/.cargo/env && \
+    rustup update && rustup component add rust-analyzer && exit"
+
+# ----------------------- Java ----------------------- #
+RUN curl -fsSL https://get.sdkman.io | bash && \
+    zsh -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
+    sdk install gradle && sdk install springboot && exit"
+
+# ----------------------- Python ----------------------- #
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py311_24.5.0-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
     chmod +x $HOME/miniconda.sh && \
     $HOME/miniconda.sh -b -p $HOME/miniconda && \
     rm $HOME/miniconda.sh && \
     $HOME/miniconda/bin/conda init zsh
 
-# Neovim
-RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir neovim && \
+# ----------------------- Neovim ----------------------- #
+RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir neovim isort black && \
     zsh -c "source $HOME/.zshrc && \
     nvim --headless +qa && \
     /home/zerohertz/mason.sh && rm /home/zerohertz/mason.sh && \
-    nvim --headless +TSUpdateSync '+sleep 20' +qa"
+    nvim --headless +TSUpdateSync '+sleep 20' +qa && exit"
 
-# zerohertzLib
+# ----------------------- zerohertzLib ----------------------- #
 RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir zerohertzLib[all]
 
 WORKDIR /home/zerohertz/workspace
