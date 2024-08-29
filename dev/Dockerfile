@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 LABEL maintainer="Zerohertz <ohg3417@gmail.com>"
 LABEL description="Zerohertz's Dev Environment"
@@ -6,7 +6,8 @@ LABEL license="MIT"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN groupadd -g 1000 zerohertz && useradd -r -u 1000 -g zerohertz zerohertz && \
+# groupadd -g 1000 zerohertz && useradd -r -u 1000 -g zerohertz zerohertz
+RUN groupmod -n zerohertz ubuntu && usermod -l zerohertz ubuntu && usermod -d /home/zerohertz -m zerohertz && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
     apt-get install -y sudo locales curl wget unzip git gnupg software-properties-common tree tmux python3-opencv && \
     locale-gen en_US.UTF-8 && \
@@ -59,9 +60,10 @@ USER zerohertz
 
 # ----------------------- ZSH ----------------------- #
 RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/sh/install_zsh.sh | bash && \
-    sudo chsh -s $(which zsh) && $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
-    mkdir -p $HOME/.config && git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles --recurse-submodules && cd $HOME/dotfiles  && \
-    make
+    sudo chsh -s $(which zsh) $(whoami) && sudo chsh -s $(which zsh) root && \
+    $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
+    git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles --recurse-submodules && \
+    cd $HOME/dotfiles && make
 
 # ----------------------- Rust ----------------------- #
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
@@ -74,7 +76,7 @@ RUN curl -fsSL https://get.sdkman.io | bash && \
     sdk install gradle && sdk install springboot && exit"
 
 # ----------------------- Python ----------------------- #
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py311_24.5.0-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
     chmod +x $HOME/miniconda.sh && \
     $HOME/miniconda.sh -b -p $HOME/miniconda && \
     rm $HOME/miniconda.sh && \
@@ -91,4 +93,5 @@ RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir neovim isort black 
 RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir zerohertzLib[all]
 
 WORKDIR /home/zerohertz/workspace
-CMD ["zsh"]
+ENTRYPOINT [ "zsh", "-c" ]
+CMD ["cd $HOME/dotfiles && git pull --recurse-submodules > /dev/null 2>&1 && make > /dev/null 2>&1 && cd $HOME/workspace && zsh" ]
