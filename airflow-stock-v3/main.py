@@ -7,9 +7,9 @@ from datetime import datetime
 import pytz
 import zerohertzLib as zz
 
-SLACK = os.environ.get("SLACK")
 NORMAL = os.environ.get("NORMAL")
 ISA = os.environ.get("ISA")
+SLACK = os.environ.get("SLACK")
 
 
 def _balance():

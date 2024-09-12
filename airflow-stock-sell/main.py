@@ -5,12 +5,12 @@ from datetime import datetime, timedelta
 import FinanceDataReader as fdr
 import zerohertzLib as zz
 
+NORMAL = os.environ.get("NORMAL")
+ISA = os.environ.get("ISA")
 START_DAY = os.environ.get("START_DAY")
 SLACK = os.environ.get("SLACK")
 MP_NUM = int(os.environ.get("MP_NUM"))
 KOR = bool(int(os.environ.get("KOR")))
-NORMAL = os.environ.get("NORMAL")
-ISA = os.environ.get("ISA")
 
 
 def main(channel, test_code):
