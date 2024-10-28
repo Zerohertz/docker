@@ -12,6 +12,7 @@ packages=(
     goimports
     gomodifytags
     gopls
+    gradle-language-server
     hadolint
     helm-ls
     impl

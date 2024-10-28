@@ -38,13 +38,17 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
     apt-get update && \
     apt-get install -y terraform
 
+# ----------------------- Local Test ----------------------- #
+# RUN sed -i 's|archive.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
+#     sed -i 's|security.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
+#     apt-get update
+
 # ----------------------- Neovim ----------------------- #
 COPY mason.sh /home/zerohertz/mason.sh
 RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz && \
     tar -xzf nvim-linux64.tar.gz && \
     cp -r nvim-linux64/* /usr/local/ && \
     rm nvim-linux64.tar.gz && rm -rf nvim-linux64 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y ripgrep fish nodejs luarocks && \
     npm install -g neovim && \
@@ -71,9 +75,13 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     rustup update && rustup component add rust-analyzer && exit"
 
 # ----------------------- Java ----------------------- #
+COPY gradlew /home/zerohertz/gradlew
 RUN curl -fsSL https://get.sdkman.io | bash && \
     zsh -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
-    sdk install gradle && sdk install springboot && exit"
+    sdk install gradle && sdk install springboot && \
+    /home/zerohertz/gradlew --no-daemon --version && \
+    rm /home/zerohertz/gradlew && \
+    exit"
 
 # ----------------------- Python ----------------------- #
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
