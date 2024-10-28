@@ -75,13 +75,9 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     rustup update && rustup component add rust-analyzer && exit"
 
 # ----------------------- Java ----------------------- #
-COPY gradlew /home/zerohertz/gradlew
 RUN curl -fsSL https://get.sdkman.io | bash && \
     zsh -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
-    sdk install gradle && sdk install springboot && \
-    /home/zerohertz/gradlew --no-daemon --version && \
-    rm /home/zerohertz/gradlew && \
-    exit"
+    sdk install gradle && sdk install springboot && exit"
 
 # ----------------------- Python ----------------------- #
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
