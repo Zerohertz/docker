@@ -40,10 +40,10 @@ if __name__ == "__main__":
         year_mean = (raw[-1] - raw.mean()) / raw.mean() * 100
         year_q1 = (raw[-1] - raw.quantile(0.25)) / raw.quantile(0.25) * 100
         message = f":money_with_wings: 현재 USD/KRW: {raw[-1]:.2f}₩\n"
-        message += f":calendar: 최근 1달\n"
+        message += ":calendar: 최근 1달\n"
         message += f"\t:dollar: 평균 대비 현재 시세: {month_mean:.2f}%\n"
         message += f"\t:dollar: 저점 대비 현재 시세: {month_low:.2f}%\n"
-        message += f":calendar: 최근 1년\n"
+        message += ":calendar: 최근 1년\n"
         message += f"\t:dollar: 평균 대비 현재 시세: {year_mean:.2f}%\n"
         message += f"\t:dollar: 저점 대비 현재 시세: {year_low:.2f}%\n"
         message += f"\t:dollar: Q1 대비 현재 시세: {year_q1:.2f}%\n"
