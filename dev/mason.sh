@@ -8,6 +8,7 @@ packages=(
     codelldb
     docker-compose-language-service
     dockerfile-language-server
+    eslint-lsp
     gofumpt
     goimports
     gomodifytags
