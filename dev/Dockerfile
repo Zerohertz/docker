@@ -19,11 +19,10 @@ RUN groupmod -n zerohertz ubuntu && usermod -l zerohertz ubuntu && usermod -d /h
     mkdir -p /home/zerohertz/workspace && chown -R zerohertz:zerohertz /home/zerohertz
 
 # ----------------------- C++ ----------------------- #
-RUN apt-get install -y build-essential gcc
+RUN apt-get install -y build-essential gcc cmake
 
 # ----------------------- Go ----------------------- #
-RUN wget https://go.dev/dl/go1.22.4.linux-amd64.tar.gz && \
-    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz && rm go1.22.4.linux-amd64.tar.gz
+RUN apt-get install -y golang
 
 # ----------------------- Java ----------------------- #
 RUN apt-get install -y openjdk-17-jdk
