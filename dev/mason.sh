@@ -2,6 +2,7 @@
 
 packages=(
     black
+    buf
     clangd
     cmakelang
     cmakelint
@@ -26,7 +27,7 @@ packages=(
     neocmakelsp
     prettier
     pyright
-    ruff-lsp
+    ruff
     shfmt
     sqlfluff
     stylua

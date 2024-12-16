@@ -49,7 +49,7 @@ RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.
     cp -r nvim-linux64/* /usr/local/ && \
     rm nvim-linux64.tar.gz && rm -rf nvim-linux64 && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y ripgrep fd-find fish luarocks nodejs && \
+    apt-get install -y ripgrep fd-find fzf fish luarocks nodejs && \
     npm install -g neovim tree-sitter-cli && \
     chmod +x /home/zerohertz/mason.sh
 
