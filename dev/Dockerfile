@@ -62,11 +62,12 @@ RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygi
 USER zerohertz
 
 # ----------------------- ZSH ----------------------- #
-RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/etc/master/Util/sh/install_zsh.sh | bash && \
+RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/dotfiles/main/linux/zsh.sh | bash && \
     sudo chsh -s $(which zsh) $(whoami) && sudo chsh -s $(which zsh) root && \
     $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
-    git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles --recurse-submodules && \
-    cd $HOME/dotfiles && make
+    git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles && \
+    cd $HOME/dotfiles && git submodule update --init -- .config/nvim && \
+    make
 
 # ----------------------- Rust ----------------------- #
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
