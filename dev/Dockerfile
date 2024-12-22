@@ -98,4 +98,5 @@ RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir zerohertzLib[all]==
 
 WORKDIR /home/zerohertz/workspace
 ENTRYPOINT [ "zsh", "-c" ]
-CMD ["cd $HOME/dotfiles && git pull --recurse-submodules > /dev/null 2>&1 && make > /dev/null 2>&1 && cd $HOME/workspace && zsh" ]
+# CMD [ "cd $HOME/dotfiles && git pull --recurse-submodules > /dev/null 2>&1 && make > /dev/null 2>&1 && cd $HOME/workspace && zsh" ]
+CMD [ "tail -f /dev/null" ]
