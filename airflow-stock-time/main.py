@@ -40,7 +40,6 @@ def main(slack):
         title="",
         colors="Set2",
         markersize=0,
-        save=False,
     )
     plt.gca().yaxis.set_major_formatter(
         ticker.FuncFormatter(lambda x, p: format(int(x), ","))
