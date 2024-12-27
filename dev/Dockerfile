@@ -35,7 +35,7 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
     https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
     tee /etc/apt/sources.list.d/hashicorp.list && \
     apt-get update && \
-    apt-get install -y terraform
+    apt-get install -y packer terraform
 
 # ----------------------- Local Test ----------------------- #
 # RUN sed -i 's|archive.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
@@ -87,7 +87,7 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86
     $HOME/miniconda/bin/conda init zsh
 
 # ----------------------- Neovim ----------------------- #
-RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir neovim isort black && \
+RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir neovim isort black pylatexenc && \
     zsh -c "source $HOME/.zshrc && \
     nvim --headless +qa && \
     /home/zerohertz/mason.sh && rm /home/zerohertz/mason.sh && \
