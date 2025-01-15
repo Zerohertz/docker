@@ -94,7 +94,7 @@ RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir neovim isort black 
     nvim --headless +TSUpdateSync '+sleep 20' +qa && exit"
 
 # ----------------------- zerohertzLib ----------------------- #
-RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir zerohertzLib[all]==1.1.9
+RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir zerohertzLib[all]==1.1.9 uv
 
 WORKDIR /home/zerohertz/workspace
 ENTRYPOINT [ "zsh", "-c" ]
