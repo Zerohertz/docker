@@ -67,7 +67,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/dotfiles/main/linux/z
     $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
     git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles && \
     cd $HOME/dotfiles && git submodule update --init -- .config/nvim && \
-    make linux
+    mkdir $HOME/.config && make linux
 
 # ----------------------- Rust ----------------------- #
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
