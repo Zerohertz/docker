@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # groupadd -g 1000 zerohertz && useradd -r -u 1000 -g zerohertz zerohertz
 RUN groupmod -n zerohertz ubuntu && usermod -l zerohertz ubuntu && usermod -d /home/zerohertz -m zerohertz && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
-    apt-get install -y sudo locales curl wget unzip git gnupg software-properties-common eza tmux python3-opencv && \
+    apt-get install -y sudo locales curl wget unzip git gnupg software-properties-common eza tmux python3-opencv neofetch && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
     echo "Asia/Seoul" > /etc/timezone && \
@@ -67,7 +67,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/dotfiles/main/linux/z
     $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
     git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles && \
     cd $HOME/dotfiles && git submodule update --init -- .config/nvim && \
-    make
+    make linux
 
 # ----------------------- Rust ----------------------- #
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
