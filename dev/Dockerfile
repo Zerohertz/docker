@@ -25,7 +25,7 @@ RUN apt-get install -y build-essential gcc cmake
 RUN apt-get install -y golang
 
 # ----------------------- Java ----------------------- #
-RUN apt-get install -y openjdk-17-jdk
+RUN apt-get install -y openjdk-17-jdk openjdk-21-jdk
 
 # ----------------------- Terraform ----------------------- #
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
