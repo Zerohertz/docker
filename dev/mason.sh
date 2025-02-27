@@ -31,6 +31,8 @@ packages=(
     shfmt
     sqlfluff
     stylua
+    svelte-language-server
+    tailwindcss-language-server
     taplo
     terraform-ls
     tflint
