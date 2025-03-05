@@ -67,7 +67,9 @@ def create(token, file):
     date = file.split(".")[0].split("_")[1]
     data = pd.read_excel(file)
     for index, row in data.iterrows():
-        _create(token=token, date=date, data=row.where(pd.notnull(row), None).to_dict())
+        _create(
+            token=token, date=date, data=row.where(pd.notnull(row), "None").to_dict()
+        )
 
 
 def main():
