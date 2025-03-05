@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from glob import glob
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 import requests
@@ -15,7 +15,8 @@ ADMIN_DATA = {
 
 
 def download_data():
-    now = datetime.now()
+    logger.info("Download data: Start")
+    now = datetime.now(ZoneInfo("Asia/Seoul"))
     ymd = now.strftime("%Y%m%d")
     file_name = f"병역지정업체검색_{ymd}.xls"
     url = "https://work.mma.go.kr/caisBYIS/search/downloadBYJJEopCheExcel.do"
@@ -23,12 +24,13 @@ def download_data():
     response = requests.post(url, data=data)
     with open(file_name, "wb") as file:
         file.write(response.content)
+    logger.info("Download data: End")
     return file_name
 
 
 def login():
     response = requests.post(f"{API_URI}/v1/auth/password/token", data=ADMIN_DATA)
-    logger.info(f"{response.status_code=}")
+    logger.info(f"Log In: {response.status_code=}")
     data = response.json()
     if response.status_code != 200:
         logger.critical(data)
@@ -59,8 +61,6 @@ def _create(token, date, data):
     data = response.json()
     if response.status_code != 200:
         logger.critical(data)
-    else:
-        logger.info(data)
 
 
 def create(token, file):
