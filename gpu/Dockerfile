@@ -24,14 +24,14 @@ RUN apt-get install -y golang
 # RUN apt-get install -y openjdk-17-jdk openjdk-21-jdk
 
 # ----------------------- Terraform ----------------------- #
-# RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
-#     gpg --dearmor | \
-#     tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null && \
-#     echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
-#     https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-#     tee /etc/apt/sources.list.d/hashicorp.list && \
-#     apt-get update && \
-#     apt-get install -y packer terraform
+RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
+    gpg --dearmor | \
+    tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+    tee /etc/apt/sources.list.d/hashicorp.list && \
+    apt-get update && \
+    apt-get install -y packer terraform
 
 # ----------------------- Local Test ----------------------- #
 # RUN sed -i 's|archive.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
@@ -50,10 +50,10 @@ RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x8
     chmod +x /root/mason.sh
 
 # ----------------------- Lazygit ----------------------- #
-# RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*') && \
-#     curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" && \
-#     tar xf lazygit.tar.gz lazygit && \
-#     install lazygit /usr/local/bin && rm lazygit*
+RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*') && \
+    curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" && \
+    tar xf lazygit.tar.gz lazygit && \
+    install lazygit /usr/local/bin && rm lazygit*
 
 # ----------------------- ZSH ----------------------- #
 RUN apt-get install zsh -y && \
@@ -70,9 +70,9 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     rustup update && rustup component add rust-analyzer && exit"
 
 # ----------------------- Java ----------------------- #
-RUN curl -fsSL https://get.sdkman.io | bash && \
-    zsh -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
-    sdk install gradle && sdk install springboot && exit"
+# RUN curl -fsSL https://get.sdkman.io | bash && \
+#     zsh -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
+#     sdk install gradle && sdk install springboot && exit"
 
 # ----------------------- Python ----------------------- #
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
@@ -94,10 +94,10 @@ COPY requirements.txt /root/requirements.txt
 RUN $HOME/miniconda/bin/pip install -r /root/requirements.txt --no-cache-dir && \
     rm /root/requirements.txt
 # NOTE: https://github.com/mpi4py/mpi4py/issues/335#issuecomment-1486366039
-# RUN rm /root/miniconda/compiler_compat/ld && \
-#     $HOME/miniconda/bin/pip install mpi4py && \
-#     $HOME/miniconda/bin/pip install flash-attn --no-build-isolation && \
-#     DS_BUILD_CPU_ADAM=1 $HOME/miniconda/bin/pip install deepspeed==0.16.4
+RUN rm /root/miniconda/compiler_compat/ld && \
+    $HOME/miniconda/bin/pip install mpi4py && \
+    $HOME/miniconda/bin/pip install flash-attn --no-build-isolation && \
+    DS_BUILD_CPU_ADAM=1 $HOME/miniconda/bin/pip install deepspeed==0.16.4
 
 WORKDIR /root/workspace
 ENTRYPOINT [ "zsh", "-c" ]
