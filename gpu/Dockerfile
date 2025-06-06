@@ -7,7 +7,7 @@ LABEL license="MIT"
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
-    apt-get install -y locales curl wget unzip git gnupg software-properties-common eza tmux neofetch autojump && \
+    apt-get install -y locales curl wget unzip git gnupg software-properties-common eza tmux neofetch autojump bat git-delta && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
     echo "Asia/Seoul" > /etc/timezone && \
