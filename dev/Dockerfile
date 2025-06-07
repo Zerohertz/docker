@@ -16,16 +16,26 @@ RUN groupmod -n zerohertz ubuntu && usermod -l zerohertz ubuntu && usermod -d /h
     ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     echo "zerohertz ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-    mkdir -p /home/zerohertz/workspace && chown -R zerohertz:zerohertz /home/zerohertz
+    mkdir -p /workspace && chown -R zerohertz:zerohertz /home/zerohertz /workspace
 
 # ----------------------- C++ ----------------------- #
-RUN apt-get install -y build-essential gcc cmake
+RUN apt-get install -y build-essential gcc clang clangd cmake
 
 # ----------------------- Go ----------------------- #
 RUN apt-get install -y golang
 
 # ----------------------- Java ----------------------- #
 RUN apt-get install -y openjdk-17-jdk openjdk-21-jdk
+
+# ----------------------- Python ----------------------- #
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uvx /bin/uvx
+# curl -LsSf https://astral.sh/uv/install.sh | sh && \
+#     source $HOME/.local/bin/env && \
+ENV UV_PYTHON_INSTALL_DIR=/opt/venv
+RUN uv python install 3.13 && \
+    uv venv /opt/venv/main --python 3.13 --prompt "main" --seed --color always && \
+    chown -R zerohertz:zerohertz /opt/venv
 
 # ----------------------- Terraform ----------------------- #
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
@@ -80,23 +90,25 @@ RUN curl -fsSL https://get.sdkman.io | bash && \
     sdk install gradle && sdk install springboot && exit"
 
 # ----------------------- Python ----------------------- #
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
-    chmod +x $HOME/miniconda.sh && \
-    $HOME/miniconda.sh -b -p $HOME/miniconda && \
-    rm $HOME/miniconda.sh && \
-    $HOME/miniconda/bin/conda init zsh
+# RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
+#     chmod +x $HOME/miniconda.sh && \
+#     $HOME/miniconda.sh -b -p $HOME/miniconda && \
+#     rm $HOME/miniconda.sh && \
+#     $HOME/miniconda/bin/conda init zsh
 
 # ----------------------- Neovim ----------------------- #
-RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir neovim isort black pylatexenc && \
+RUN . /opt/venv/main/bin/activate && \
+    uv pip install --no-cache-dir neovim isort black pylatexenc && \
     zsh -c "source $HOME/.zshrc && \
     nvim --headless +qa && \
     /home/zerohertz/mason.sh && rm /home/zerohertz/mason.sh && \
     nvim --headless +TSUpdateSync '+sleep 20' +qa && exit"
 
 # ----------------------- zerohertzLib ----------------------- #
-RUN /home/zerohertz/miniconda/bin/pip install --no-cache-dir zerohertzLib[all]==1.1.9 uv
+RUN . /opt/venv/main/bin/activate && \
+    uv pip install --no-cache-dir zerohertzLib[all]==1.1.9
 
-WORKDIR /home/zerohertz/workspace
+WORKDIR /workspace
 ENTRYPOINT [ "zsh", "-c" ]
 # CMD [ "cd $HOME/dotfiles && git pull --recurse-submodules > /dev/null 2>&1 && make > /dev/null 2>&1 && cd $HOME/workspace && zsh" ]
 CMD [ "tail -f /dev/null" ]
