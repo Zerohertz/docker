@@ -14,6 +14,7 @@ RUN groupmod -n zerohertz ubuntu && usermod -l zerohertz ubuntu && usermod -d /h
     update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
     echo "Asia/Seoul" > /etc/timezone && \
     ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    ln -s /usr/bin/batcat /usr/bin/bat && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     echo "zerohertz ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     mkdir -p /workspace && chown -R zerohertz:zerohertz /home/zerohertz /workspace
@@ -26,6 +27,16 @@ RUN apt-get install -y golang
 
 # ----------------------- Java ----------------------- #
 RUN apt-get install -y openjdk-17-jdk openjdk-21-jdk
+
+# ----------------------- Node ----------------------- #
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
+    export NVM_DIR="$HOME/.nvm" && \
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
+    nvm install 24 && \
+    npm install -g neovim tree-sitter-cli && \
+    chown -R zerohertz:zerohertz $HOME/.nvm && \
+    mv $HOME/.nvm /home/zerohertz/.nvm && \
+    ln -sf /home/zerohertz/.nvm $HOME/.nvm
 
 # ----------------------- Python ----------------------- #
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
@@ -47,20 +58,13 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
     apt-get update && \
     apt-get install -y packer terraform
 
-# ----------------------- Local Test ----------------------- #
-# RUN sed -i 's|archive.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
-#     sed -i 's|security.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
-#     apt-get update
-
 # ----------------------- Neovim ----------------------- #
 COPY mason.sh /home/zerohertz/mason.sh
 RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz && \
     tar -xzf nvim-linux-x86_64.tar.gz && \
     cp -r nvim-linux-x86_64/* /usr/local/ && \
     rm nvim-linux-x86_64.tar.gz && rm -rf nvim-linux-x86_64 && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y ripgrep fd-find fzf fish luarocks nodejs && \
-    npm install -g neovim tree-sitter-cli && \
+    apt-get install -y ripgrep fd-find fzf fish luarocks && \
     chmod +x /home/zerohertz/mason.sh
 
 # ----------------------- Lazygit ----------------------- #
@@ -68,6 +72,11 @@ RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygi
     curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" && \
     tar xf lazygit.tar.gz lazygit && \
     install lazygit /usr/local/bin && rm lazygit*
+
+# ----------------------- Local Test ----------------------- #
+# RUN sed -i 's|archive.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
+#     sed -i 's|security.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
+#     apt-get update
 
 USER zerohertz
 
@@ -99,6 +108,8 @@ RUN curl -fsSL https://get.sdkman.io | bash && \
 # ----------------------- Neovim ----------------------- #
 RUN . /opt/venv/main/bin/activate && \
     uv pip install --no-cache-dir neovim isort black pylatexenc && \
+    export NVM_DIR="$HOME/.nvm" && \
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
     zsh -c "source $HOME/.zshrc && \
     nvim --headless +qa && \
     /home/zerohertz/mason.sh && rm /home/zerohertz/mason.sh && \
@@ -110,5 +121,4 @@ RUN . /opt/venv/main/bin/activate && \
 
 WORKDIR /workspace
 ENTRYPOINT [ "zsh", "-c" ]
-# CMD [ "cd $HOME/dotfiles && git pull --recurse-submodules > /dev/null 2>&1 && make > /dev/null 2>&1 && cd $HOME/workspace && zsh" ]
 CMD [ "tail -f /dev/null" ]
