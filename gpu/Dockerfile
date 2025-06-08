@@ -15,13 +15,22 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
 # ----------------------- C++ ----------------------- #
-RUN apt-get install -y build-essential gcc cmake
+RUN apt-get install -y build-essential gcc clang clangd cmake
 
 # ----------------------- Go ----------------------- #
 RUN apt-get install -y golang
 
 # ----------------------- Java ----------------------- #
 # RUN apt-get install -y openjdk-17-jdk openjdk-21-jdk
+
+# ----------------------- Python ----------------------- #
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uvx /bin/uvx
+# curl -LsSf https://astral.sh/uv/install.sh | sh && \
+#     source $HOME/.local/bin/env && \
+ENV UV_PYTHON_INSTALL_DIR=/opt/venv
+RUN uv python install 3.12 && \
+    uv venv /opt/venv/main --python 3.12 --prompt "main" --seed --color always
 
 # ----------------------- Terraform ----------------------- #
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
@@ -75,14 +84,15 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
 #     sdk install gradle && sdk install springboot && exit"
 
 # ----------------------- Python ----------------------- #
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
-    chmod +x $HOME/miniconda.sh && \
-    $HOME/miniconda.sh -b -p $HOME/miniconda && \
-    rm $HOME/miniconda.sh && \
-    $HOME/miniconda/bin/conda init zsh
+# RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
+#     chmod +x $HOME/miniconda.sh && \
+#     $HOME/miniconda.sh -b -p $HOME/miniconda && \
+#     rm $HOME/miniconda.sh && \
+#     $HOME/miniconda/bin/conda init zsh
 
 # ----------------------- Neovim ----------------------- #
-RUN $HOME/miniconda/bin/pip install --no-cache-dir neovim isort black pylatexenc && \
+RUN . /opt/venv/main/bin/activate && \
+    pip install --no-cache-dir neovim isort black pylatexenc && \
     zsh -c "source $HOME/.zshrc && \
     nvim --headless +qa && \
     $HOME/mason.sh && rm $HOME/mason.sh && \
@@ -91,14 +101,12 @@ RUN $HOME/miniconda/bin/pip install --no-cache-dir neovim isort black pylatexenc
 # ----------------------- Dev ----------------------- #
 RUN apt-get install libmpich-dev libopenmpi-dev btop -y
 COPY requirements.txt /root/requirements.txt
-RUN $HOME/miniconda/bin/pip install -r /root/requirements.txt --no-cache-dir && \
+RUN . /opt/venv/main/bin/activate && \
+    uv pip install -r /root/requirements.txt --torch-backend=auto --no-cache-dir && \
     rm /root/requirements.txt
-# NOTE: https://github.com/mpi4py/mpi4py/issues/335#issuecomment-1486366039
-RUN rm /root/miniconda/compiler_compat/ld && \
-    $HOME/miniconda/bin/pip install mpi4py && \
-    $HOME/miniconda/bin/pip install flash-attn --no-build-isolation && \
-    DS_BUILD_CPU_ADAM=1 $HOME/miniconda/bin/pip install deepspeed==0.16.4
+RUN . /opt/venv/main/bin/activate && \
+    pip install flash-attn --no-build-isolation && \
+    DS_BUILD_CPU_ADAM=1 pip install deepspeed --no-build-isolation
 
-WORKDIR /root/workspace
+WORKDIR /workspace
 ENTRYPOINT [ "zsh", "-c" ]
-CMD [ "tail -f /dev/null" ]

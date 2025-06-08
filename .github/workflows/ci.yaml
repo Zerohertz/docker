@@ -7,7 +7,6 @@ on:
     paths:
       - "airflow-*/**"
       - "dev/**"
-      - "gpu/**"
 
 jobs:
   detect-changes:
@@ -24,7 +23,7 @@ jobs:
         id: set-matrix
         run: |
           CHANGED_DIRS=()
-          for path in airflow-* dev gpu; do
+          for path in airflow-* dev; do
             if git diff --name-only HEAD^ HEAD | grep -qE "^$path/"; then
               CHANGED_DIRS+=("$path")
             fi
