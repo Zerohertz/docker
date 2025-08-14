@@ -44,8 +44,8 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uvx /bin/uvx
 # curl -LsSf https://astral.sh/uv/install.sh | sh && \
 #     source $HOME/.local/bin/env && \
 ENV UV_PYTHON_INSTALL_DIR=/opt/venv
-RUN uv python install 3.13 && \
-    uv venv /opt/venv/main --python 3.13 --prompt "main" --seed --color always && \
+RUN uv python install 3.12 && \
+    uv venv /opt/venv/main --python 3.12 --prompt "main" --seed --color always && \
     chown -R zerohertz:zerohertz /opt/venv
 
 # ----------------------- Terraform ----------------------- #
