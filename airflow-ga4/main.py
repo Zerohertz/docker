@@ -5,11 +5,11 @@ import traceback
 import zerohertzLib as zz
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
-from matplotlib import pyplot as plt
 
 KEY = json.loads(os.environ.get("KEY"))
 PROPERTY_ID = os.environ.get("PROPERTY_ID")
-SLACK = os.environ.get("SLACK")
+DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
+DISCORD_BOT_CHANNEL = os.environ.get("DISCORD_BOT_CHANNEL")
 PER = os.environ.get("PER")
 ETC_PAGE = 4
 
@@ -37,7 +37,7 @@ def get_data(tar):
     return response
 
 
-def make_barh(title, response, slack, thread_ts):
+def make_barh(title, response, discord, thread_id):
     tmp_people = {}
     tmp_time = {}
     for row in response["rows"][::-1]:
@@ -67,29 +67,23 @@ def make_barh(title, response, slack, thread_ts):
     zz.plot.subplot(1, 2, 2)
     zz.plot.barh(time, "Time [sec]", title=title, rot=0, dim="초", sign=0)
     path = zz.plot.savefig(title, 100)
-    slack.file(path, thread_ts=thread_ts)
+    discord.file(path, thread_id)
 
 
-def main(tar, slack):
+def main(tar, discord):
     if int(PER) <= 2:
         day = "day"
     else:
         day = "days"
-    thread_ts = slack.message(f"> :rocket: {PER}{day} Report").get("ts")
+    thread_id = discord.message(f"> :rocket: {PER}{day} Report").json().get("id")
     for t, tit in tar.items():
         response = get_data(t)
-        make_barh(tit, response, slack, thread_ts)
+        make_barh(tit, response, discord, thread_id)
 
 
 if __name__ == "__main__":
     ga4_service = get_ga4_service(KEY)
-    slack = zz.api.SlackBot(
-        SLACK,
-        "google_analytics_4",
-        name="Google Analytics 4",
-        icon_emoji="bar_chart",
-        timeout=30,
-    )
+    discord = zz.api.DiscordBot(DISCORD_BOT_TOKEN, DISCORD_BOT_CHANNEL)
     tar = {
         "city": "City",
         "firstUserSource": "First User Source",
@@ -98,15 +92,17 @@ if __name__ == "__main__":
     }
     try:
         zz.plot.font(kor=True)
-        main(tar, slack)
-    except Exception as e:
-        response = slack.message(
+        main(tar, discord)
+    except Exception as exc:
+        exc_str = str(exc)
+        response = discord.message(
             ":warning:" * 3
             + "\tERROR!!!\t"
             + ":warning:" * 3
             + "\n"
             + "```\n"
-            + str(e)
+            + exc_str
             + "\n```",
         )
-        slack.message(traceback.format_exc(), True, response.get("ts"))
+        response = discord.create_thread(exc_str, response.json()["id"])
+        discord.message(traceback.format_exc(), "python", response.json()["id"])

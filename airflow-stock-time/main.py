@@ -6,14 +6,15 @@ import zerohertzLib as zz
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 
-SLACK = os.environ.get("SLACK")
+DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
+DISCORD_BOT_CHANNEL = os.environ.get("DISCORD_BOT_CHANNEL")
 
 
-def main(slack):
+def main(discord):
     try:
         data = zz.util.Json("stock/balance.json").data
     except FileNotFoundError:
-        slack.message("Balance: NULL", True)
+        discord.message("Balance: NULL", "bash")
         return None
     fmt = "%Y-%m-%d %H:%M:%S.%f%z"
     xdata, stocks = [], []
@@ -51,29 +52,25 @@ def main(slack):
         fontsize="small",
     )
     path_time = zz.plot.savefig("time", 100)
-    slack.file(path_time)
+    discord.file(path_time)
     return None
 
 
 if __name__ == "__main__":
+    discord = zz.api.DiscordBot(DISCORD_BOT_TOKEN, DISCORD_BOT_CHANNEL)
     try:
-        slack = zz.api.SlackBot(
-            SLACK,
-            channel="stock_time",
-            name="Balance",
-            icon_emoji="moneybag",
-            timeout=30,
-        )
         zz.plot.font(kor=True)
-        main(slack)
-    except Exception as e:
-        response = slack.message(
+        main(discord)
+    except Exception as exc:
+        exc_str = str(exc)
+        response = discord.message(
             ":warning:" * 3
             + "\tERROR!!!\t"
             + ":warning:" * 3
             + "\n"
             + "```\n"
-            + str(e)
+            + exc_str
             + "\n```",
         )
-        slack.message(traceback.format_exc(), True, response.get("ts"))
+        response = discord.create_thread(exc_str, response.json()["id"])
+        discord.message(traceback.format_exc(), "python", response.json()["id"])

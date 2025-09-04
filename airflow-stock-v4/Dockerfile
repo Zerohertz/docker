@@ -1,13 +1,14 @@
 FROM python:3.12
 
 LABEL maintainer="Zerohertz <ohg3417@gmail.com>"
-LABEL description="Airflow: Google Analytics 4"
+LABEL description="Airflow: Stock v4"
 LABEL license="MIT"
 
 WORKDIR /app
 COPY main.py .
-COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir \
+    pytz \
+    zerohertzLib[quant]==1.2.0
 
 CMD ["python3", "main.py"]

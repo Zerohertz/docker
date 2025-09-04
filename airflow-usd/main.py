@@ -6,17 +6,12 @@ from datetime import datetime, timedelta
 import FinanceDataReader as fdr
 import zerohertzLib as zz
 
-SLACK = os.environ.get("SLACK")
+DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
+DISCORD_BOT_CHANNEL = os.environ.get("DISCORD_BOT_CHANNEL")
 
 
 if __name__ == "__main__":
-    slack = zz.api.SlackBot(
-        SLACK,
-        channel="usd",
-        name="USD/KRW",
-        icon_emoji="dollar",
-        timeout=30,
-    )
+    discord = zz.api.DiscordBot(DISCORD_BOT_TOKEN, DISCORD_BOT_CHANNEL)
     try:
         zz.plot.font(kor=True)
         now = datetime.now()
@@ -47,17 +42,20 @@ if __name__ == "__main__":
         message += f"\t:dollar: 평균 대비 현재 시세: {year_mean:.2f}%\n"
         message += f"\t:dollar: 저점 대비 현재 시세: {year_low:.2f}%\n"
         message += f"\t:dollar: Q1 대비 현재 시세: {year_q1:.2f}%\n"
-        response = slack.message(message)
+        response = discord.message(message)
+        response = discord.create_thread(message, response.json()["id"])
         time.sleep(3)
-        slack.file(path, response.get("ts"))
-    except Exception as error:
-        response = slack.message(
+        discord.file(path, response.json()["id"])
+    except Exception as exc:
+        exc_str = str(exc)
+        response = discord.message(
             ":warning:" * 3
             + "\tERROR!!!\t"
             + ":warning:" * 3
             + "\n"
             + "```\n"
-            + str(error)
+            + exc_str
             + "\n```",
         )
-        slack.message(traceback.format_exc(), True, response.get("ts"))
+        response = discord.create_thread(exc_str, response.json()["id"])
+        discord.message(traceback.format_exc(), "python", response.json()["id"])
