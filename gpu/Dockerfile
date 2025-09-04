@@ -36,7 +36,9 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uvx /bin/uvx
 # curl -LsSf https://astral.sh/uv/install.sh | sh && \
 #     source $HOME/.local/bin/env && \
-ENV UV_PYTHON_INSTALL_DIR=/opt/venv
+ENV ENV PATH="/opt/venv/main/bin:$PATH" \
+    UV_PYTHON_INSTALL_DIR=/opt/venv \
+    UV_TORCH_BACKEND=auto
 RUN uv python install 3.12 && \
     uv venv /opt/venv/main --python 3.12 --prompt "main" --seed --color always
 
@@ -97,8 +99,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
 #     $HOME/miniconda/bin/conda init zsh
 
 # ----------------------- Neovim ----------------------- #
-RUN . /opt/venv/main/bin/activate && \
-    pip install --no-cache-dir neovim isort black pylatexenc && \
+RUN pip install --no-cache-dir neovim isort black pylatexenc && \
     export NVM_DIR="$HOME/.nvm" && \
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
     zsh -c "source $HOME/.zshrc && \
@@ -106,15 +107,8 @@ RUN . /opt/venv/main/bin/activate && \
     $HOME/mason.sh && rm $HOME/mason.sh && \
     nvim --headless +TSUpdateSync '+sleep 20' +qa && exit"
 
-# ----------------------- Dev ----------------------- #
-RUN apt-get install libmpich-dev libopenmpi-dev btop -y
-COPY requirements.txt /root/requirements.txt
-RUN . /opt/venv/main/bin/activate && \
-    uv pip install -r /root/requirements.txt --torch-backend=auto --no-cache-dir && \
-    rm /root/requirements.txt
-RUN . /opt/venv/main/bin/activate && \
-    pip install flash-attn --no-build-isolation && \
-    DS_BUILD_CPU_ADAM=1 pip install deepspeed --no-build-isolation
+# ----------------------- zerohertzLib ----------------------- #
+RUN uv pip install --no-cache-dir zerohertzLib[all]==1.2.0
 
 WORKDIR /workspace
 ENTRYPOINT [ "zsh", "-c" ]
