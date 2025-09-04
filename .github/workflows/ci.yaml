@@ -86,14 +86,3 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/${{ matrix.directory }}:${{ env.new_tag }},
             ghcr.io/${{ secrets.GH_USERNAME }}/${{ matrix.directory }}:latest,
             ghcr.io/${{ secrets.GH_USERNAME }}/${{ matrix.directory }}:${{ env.new_tag }}
-
-      - name: Slack webhook
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          author_name: docker
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
-          if_mention: failure,cancelled
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_CHECK }}
-        if: always()
