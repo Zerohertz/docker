@@ -72,5 +72,5 @@ if __name__ == "__main__":
             + exc_str
             + "\n```",
         )
-        response = discord.create_thread(exc_str, response.json()["id"])
+        response = discord.create_thread(exc_str[:10], response.json()["id"])
         discord.message(traceback.format_exc(), "python", response.json()["id"])
