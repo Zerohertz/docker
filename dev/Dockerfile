@@ -43,7 +43,8 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uvx /bin/uvx
 # curl -LsSf https://astral.sh/uv/install.sh | sh && \
 #     source $HOME/.local/bin/env && \
-ENV UV_PYTHON_INSTALL_DIR=/opt/venv
+ENV PATH="/opt/venv/main/bin:$PATH" \
+    UV_PYTHON_INSTALL_DIR=/opt/venv
 RUN uv python install 3.12 && \
     uv venv /opt/venv/main --python 3.12 --prompt "main" --seed --color always && \
     chown -R zerohertz:zerohertz /opt/venv
@@ -106,8 +107,7 @@ RUN curl -fsSL https://get.sdkman.io | bash && \
 #     $HOME/miniconda/bin/conda init zsh
 
 # ----------------------- Neovim ----------------------- #
-RUN . /opt/venv/main/bin/activate && \
-    uv pip install --no-cache-dir neovim isort black pylatexenc && \
+RUN uv pip install --no-cache-dir neovim pylatexenc && \
     export NVM_DIR="$HOME/.nvm" && \
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
     zsh -c "source $HOME/.zshrc && \
@@ -116,8 +116,7 @@ RUN . /opt/venv/main/bin/activate && \
     nvim --headless +TSUpdateSync '+sleep 20' +qa && exit"
 
 # ----------------------- zerohertzLib ----------------------- #
-RUN . /opt/venv/main/bin/activate && \
-    uv pip install --no-cache-dir zerohertzLib[all]==1.1.9
+RUN uv pip install --no-cache-dir zerohertzLib[all]==1.2.0
 
 WORKDIR /workspace
 ENTRYPOINT [ "zsh", "-c" ]

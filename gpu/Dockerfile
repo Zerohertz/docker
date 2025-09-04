@@ -99,7 +99,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
 #     $HOME/miniconda/bin/conda init zsh
 
 # ----------------------- Neovim ----------------------- #
-RUN uv pip install --no-cache-dir neovim isort black pylatexenc && \
+RUN uv pip install --no-cache-dir neovim pylatexenc && \
     export NVM_DIR="$HOME/.nvm" && \
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
     zsh -c "source $HOME/.zshrc && \

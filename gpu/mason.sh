@@ -1,7 +1,6 @@
 #!/bin/zsh
 
 packages=(
-    black
     buf
     clangd
     cmakelang
@@ -18,7 +17,6 @@ packages=(
     hadolint
     helm-ls
     impl
-    isort
     java-test
     jdtls
     json-lsp
