@@ -16,17 +16,17 @@ DISCORD_BOT_CHANNEL = os.environ.get("DISCORD_BOT_CHANNEL")
 def _balance():
     reports = defaultdict(list)
     isa_kor = zz.quant.Balance(ISA, path="stock/ISA")
-    reports[":kr: `ISA   `"].append(f"""{isa_kor.balance.get("cash"):,.0f} [₩]""")
+    reports[":flag_kr: `ISA   `"].append(f"""{isa_kor.balance.get("cash"):,.0f} [₩]""")
     nor_kor = zz.quant.Balance(NORMAL, path="stock/NORMAL")
-    reports[":kr: `NORMAL`"].append(f"""{nor_kor.balance.get("cash"):,.0f} [₩]""")
+    reports[":flag_kr: `NORMAL`"].append(f"""{nor_kor.balance.get("cash"):,.0f} [₩]""")
     isa_kor.merge(nor_kor)
     nor_ovs = zz.quant.Balance(NORMAL, path="stock/NORMAL", kor=False)
     exchange = nor_ovs._exchange()
-    reports[":us: `NORMAL`"].append(
+    reports[":flag_us: `NORMAL`"].append(
         f"""{nor_ovs.balance.get("cash") * exchange:,.0f} [₩]"""
     )
-    reports[":us: `NORMAL`"].append(f"""{nor_ovs.balance.get("cash"):,.0f} [$]""")
-    reports[":us: `NORMAL`"].append(f"{exchange:,.0f} [₩/$]")
+    reports[":flag_us: `NORMAL`"].append(f"""{nor_ovs.balance.get("cash"):,.0f} [$]""")
+    reports[":flag_us: `NORMAL`"].append(f"{exchange:,.0f} [₩/$]")
     isa_kor.merge(nor_ovs)
     return isa_kor, reports
 
