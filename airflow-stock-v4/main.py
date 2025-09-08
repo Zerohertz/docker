@@ -63,8 +63,7 @@ def main(discord):
         reports[":money_with_wings: `TOTAL `"].append(f"{cash:,.0f} [₩]")
         msg = make_messages(reports)
         response = discord.message(msg)
-        response = discord.create_thread(msg[:10], response.json()["id"])
-        thread_id = response.json()["id"]
+        thread_id = discord.get_thread_id(response, name=msg)
         time.sleep(3)
         discord.file(path_bar, thread_id)
         time.sleep(3)
