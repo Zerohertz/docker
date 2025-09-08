@@ -26,7 +26,8 @@ def main(test_code):
         analysis=True,
         kor=KOR,
     )
-    test_data = qbf._get_data(test_code)
+    _, test_data = qbf._get_data(test_code)
+    print(test_data)
     if KOR and test_data.index[-1].day != now.day:
         return False
     qbf.buy()
