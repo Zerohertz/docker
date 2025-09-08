@@ -75,8 +75,8 @@ RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygi
     install lazygit /usr/local/bin && rm lazygit*
 
 # ----------------------- Local Test ----------------------- #
-# RUN sed -i 's|archive.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
-#     sed -i 's|security.ubuntu.com|kakao.mirror.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
+# RUN sed -i 's|archive.ubuntu.com|mirror.kakao.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
+#     sed -i 's|security.ubuntu.com|mirror.kakao.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
 #     apt-get update
 
 USER zerohertz
@@ -116,7 +116,7 @@ RUN uv pip install --no-cache-dir neovim pylatexenc && \
     nvim --headless +TSUpdateSync '+sleep 20' +qa && exit"
 
 # ----------------------- zerohertzLib ----------------------- #
-RUN uv pip install --no-cache-dir zerohertzLib[all]==1.2.0
+RUN uv pip install --no-cache-dir zerohertzLib[all]==1.2.3
 
 WORKDIR /workspace
 ENTRYPOINT [ "zsh", "-c" ]

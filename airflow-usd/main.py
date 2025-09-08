@@ -1,5 +1,4 @@
 import os
-import time
 import traceback
 from datetime import datetime, timedelta
 
@@ -43,9 +42,8 @@ if __name__ == "__main__":
         message += f"\t:dollar: 저점 대비 현재 시세: {year_low:.2f}%\n"
         message += f"\t:dollar: Q1 대비 현재 시세: {year_q1:.2f}%\n"
         response = discord.message(message)
-        response = discord.create_thread(message[:10], response.json()["id"])
-        time.sleep(3)
-        discord.file(path, response.json()["id"])
+        thread_id = discord.get_thread_id(response.json()["id"], name=message)
+        discord.file(path, thread_id=thread_id)
     except Exception as exc:
         exc_str = str(exc)
         response = discord.message(
@@ -57,5 +55,5 @@ if __name__ == "__main__":
             + exc_str
             + "\n```",
         )
-        response = discord.create_thread(exc_str[:10], response.json()["id"])
-        discord.message(traceback.format_exc(), "python", response.json()["id"])
+        thread_id = discord.get_thread_id(response, name=exc_str)
+        discord.message(traceback.format_exc(), "python", thread_id)

@@ -1,25 +1,20 @@
 import os
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime
 
-import FinanceDataReader as fdr
 import zerohertzLib as zz
 
 SYMBOLS = int(os.environ.get("SYMBOLS"))
-START_DAY = os.environ.get("START_DAY")
-TOP = int(os.environ.get("TOP"))
+START_DAY = os.environ.get("START_DAY", "20220101")
+TOP = int(os.environ.get("TOP", 2))
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 DISCORD_BOT_CHANNEL = os.environ.get("DISCORD_BOT_CHANNEL")
-MP_NUM = int(os.environ.get("MP_NUM"))
-KOR = bool(int(os.environ.get("KOR")))
+MP_NUM = int(os.environ.get("MP_NUM", 0))
+KOR = bool(int(os.environ.get("KOR", 1)))
 
 
 def main(test_code):
     now = datetime.now()
-    test_start_day = now - timedelta(days=30)
-    test_data = fdr.DataReader(test_code, test_start_day)
-    if KOR and test_data.index[-1].day != now.day:
-        return False
     qbf = zz.quant.QuantBotFDR(
         SYMBOLS,
         start_day=START_DAY,
@@ -27,11 +22,13 @@ def main(test_code):
         top=TOP,
         token=DISCORD_BOT_TOKEN,
         channel=DISCORD_BOT_CHANNEL,
-        name="Buy",
         mp_num=MP_NUM,
         analysis=True,
         kor=KOR,
     )
+    test_data = qbf._get_data(test_code)
+    if KOR and test_data.index[-1].day != now.day:
+        return False
     qbf.buy()
     return True
 
@@ -57,5 +54,5 @@ if __name__ == "__main__":
             + exc_str
             + "\n```",
         )
-        response = discord.create_thread(exc_str[:10], response.json()["id"])
-        discord.message(traceback.format_exc(), "python", response.json()["id"])
+        thread_id = discord.get_thread_id(response, name=exc_str)
+        discord.message(traceback.format_exc(), "python", thread_id)

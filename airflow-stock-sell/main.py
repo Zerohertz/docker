@@ -7,11 +7,12 @@ import zerohertzLib as zz
 
 NORMAL = os.environ.get("NORMAL")
 ISA = os.environ.get("ISA")
-START_DAY = os.environ.get("START_DAY")
+START_DAY = os.environ.get("START_DAY", "20220101")
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 DISCORD_BOT_CHANNEL = os.environ.get("DISCORD_BOT_CHANNEL")
-MP_NUM = int(os.environ.get("MP_NUM"))
-KOR = bool(int(os.environ.get("KOR")))
+# WARN: 여러 프로세스로 한국투자증권 API 접근 시 데이터를 가져올 수 없음...
+MP_NUM = min(int(os.environ.get("MP_NUM", 0)), 2)
+KOR = bool(int(os.environ.get("KOR", 1)))
 
 
 def main(test_code):
@@ -31,7 +32,6 @@ def main(test_code):
             ohlc="Close",
             token=DISCORD_BOT_TOKEN,
             channel=DISCORD_BOT_CHANNEL,
-            name="Sell",
             mp_num=MP_NUM,
             kor=KOR,
             path=f"stock/{name}",
@@ -61,5 +61,5 @@ if __name__ == "__main__":
             + exc_str
             + "\n```",
         )
-        response = discord.create_thread(exc_str[:10], response.json()["id"])
-        discord.message(traceback.format_exc(), "python", response.json()["id"])
+        thread_id = discord.get_thread_id(response, name=exc_str)
+        discord.message(traceback.format_exc(), "python", thread_id)

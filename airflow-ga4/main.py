@@ -75,12 +75,8 @@ def main(tar, discord):
         day = "day"
     else:
         day = "days"
-    message_id = discord.message(f"> :rocket: {PER}{day} Report").json().get("id")
-    thread_id = (
-        discord.create_thread(f"> :rocket: {PER}{day} Report", message_id)
-        .json()
-        .get("id")
-    )
+    response = discord.message(f"> :rocket: {PER}{day} Report")
+    thread_id = discord.get_thread_id(response, name=f"> :rocket: {PER}{day} Report")
     for t, tit in tar.items():
         response = get_data(t)
         make_barh(tit, response, discord, thread_id)
@@ -109,5 +105,5 @@ if __name__ == "__main__":
             + exc_str
             + "\n```",
         )
-        response = discord.create_thread(exc_str, response.json()["id"])
-        discord.message(traceback.format_exc(), "python", response.json()["id"])
+        thread_id = discord.get_thread_id(response, name=exc_str)
+        discord.message(traceback.format_exc(), "python", thread_id)

@@ -1,4 +1,4 @@
-zerohertzLib[api]==1.2.0
+zerohertzLib[api]==1.2.3
 requests
 google-api-python-client
 prettytable
