@@ -42,7 +42,7 @@ if __name__ == "__main__":
         message += f"\t:dollar: 저점 대비 현재 시세: {year_low:.2f}%\n"
         message += f"\t:dollar: Q1 대비 현재 시세: {year_q1:.2f}%\n"
         response = discord.message(message)
-        thread_id = discord.get_thread_id(response.json()["id"], name=message)
+        thread_id = discord.get_thread_id(response, name=message)
         discord.file(path, thread_id=thread_id)
     except Exception as exc:
         exc_str = str(exc)
