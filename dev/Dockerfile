@@ -99,13 +99,6 @@ RUN curl -fsSL https://get.sdkman.io | bash && \
     zsh -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
     sdk install gradle && sdk install springboot && exit"
 
-# ----------------------- Python ----------------------- #
-# RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.7.1-0-Linux-x86_64.sh -O $HOME/miniconda.sh && \
-#     chmod +x $HOME/miniconda.sh && \
-#     $HOME/miniconda.sh -b -p $HOME/miniconda && \
-#     rm $HOME/miniconda.sh && \
-#     $HOME/miniconda/bin/conda init zsh
-
 # ----------------------- Neovim ----------------------- #
 RUN uv pip install --no-cache-dir neovim pylatexenc && \
     export NVM_DIR="$HOME/.nvm" && \
