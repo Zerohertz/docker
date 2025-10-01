@@ -8,8 +8,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # groupadd -g 1000 zerohertz && useradd -r -u 1000 -g zerohertz zerohertz
 RUN groupmod -n zerohertz ubuntu && usermod -l zerohertz ubuntu && usermod -d /home/zerohertz -m zerohertz && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
+    apt-get update && \
     apt-get install -y sudo locales curl wget unzip git gnupg software-properties-common eza tmux python3-opencv neofetch autojump bat git-delta && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
     echo "Asia/Seoul" > /etc/timezone && \
@@ -20,13 +21,19 @@ RUN groupmod -n zerohertz ubuntu && usermod -l zerohertz ubuntu && usermod -d /h
     mkdir -p /workspace && chown -R zerohertz:zerohertz /home/zerohertz /workspace
 
 # ----------------------- C++ ----------------------- #
-RUN apt-get install -y build-essential gcc clang clangd cmake
+RUN apt-get update && \
+    apt-get install -y build-essential gcc clang clangd cmake && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------- Go ----------------------- #
-RUN apt-get install -y golang
+RUN apt-get update && \
+    apt-get install -y golang && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------- Java ----------------------- #
-RUN apt-get install -y openjdk-17-jdk openjdk-21-jdk
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jdk openjdk-21-jdk && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------- Node ----------------------- #
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
@@ -57,7 +64,8 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
     https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
     tee /etc/apt/sources.list.d/hashicorp.list && \
     apt-get update && \
-    apt-get install -y packer terraform
+    apt-get install -y packer terraform && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------- Neovim ----------------------- #
 COPY mason.sh /home/zerohertz/mason.sh
@@ -65,7 +73,9 @@ RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x8
     tar -xzf nvim-linux-x86_64.tar.gz && \
     cp -r nvim-linux-x86_64/* /usr/local/ && \
     rm nvim-linux-x86_64.tar.gz && rm -rf nvim-linux-x86_64 && \
+    apt-get update && \
     apt-get install -y ripgrep fd-find fzf fish luarocks && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod +x /home/zerohertz/mason.sh
 
 # ----------------------- Lazygit ----------------------- #

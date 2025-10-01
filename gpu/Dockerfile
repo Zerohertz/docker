@@ -6,8 +6,9 @@ LABEL license="MIT"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
+RUN apt-get update && \
     apt-get install -y locales curl wget unzip git gnupg software-properties-common eza tmux neofetch autojump bat git-delta && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
     echo "Asia/Seoul" > /etc/timezone && \
@@ -15,14 +16,25 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update && \
     ln -s /usr/bin/batcat /usr/bin/bat && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb && \
+    dpkg -i cuda-keyring_1.1-1_all.deb && \
+    rm -f cuda-keyring_1.1-1_all.deb /etc/apt/sources.list.d/cuda.list && \
+    apt-get update
+
 # ----------------------- C++ ----------------------- #
-RUN apt-get install -y build-essential gcc clang clangd cmake
+RUN apt-get update && \
+    apt-get install -y build-essential gcc clang clangd cmake && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------- Go ----------------------- #
-RUN apt-get install -y golang
+RUN apt-get update && \
+    apt-get install -y golang && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------- Java ----------------------- #
-# RUN apt-get install -y openjdk-17-jdk openjdk-21-jdk
+# RUN apt-get update && \
+#     apt-get install -y openjdk-17-jdk openjdk-21-jdk && \
+#     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------- Node ----------------------- #
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
@@ -50,7 +62,8 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
     https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
     tee /etc/apt/sources.list.d/hashicorp.list && \
     apt-get update && \
-    apt-get install -y packer terraform
+    apt-get install -y packer terraform && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------- Neovim ----------------------- #
 COPY mason.sh /root/mason.sh
@@ -58,7 +71,9 @@ RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x8
     tar -xzf nvim-linux-x86_64.tar.gz && \
     cp -r nvim-linux-x86_64/* /usr/local/ && \
     rm nvim-linux-x86_64.tar.gz && rm -rf nvim-linux-x86_64 && \
+    apt-get update && \
     apt-get install -y ripgrep fd-find fzf fish luarocks && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod +x /root/mason.sh
 
 # ----------------------- Lazygit ----------------------- #
@@ -73,8 +88,7 @@ RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygi
 #     apt-get update
 
 # ----------------------- ZSH ----------------------- #
-RUN apt-get install zsh -y && \
-    curl -fsSL https://raw.githubusercontent.com/Zerohertz/dotfiles/main/linux/zsh.sh | bash && \
+RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/dotfiles/main/linux/zsh.sh | bash && \
     chsh -s $(which zsh) root && \
     $HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f && \
     git clone https://github.com/Zerohertz/dotfiles $HOME/dotfiles && \
