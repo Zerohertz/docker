@@ -1,77 +1,63 @@
 import os
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime
 
-import FinanceDataReader as fdr
 import zerohertzLib as zz
 
-SYMBOLS = int(os.environ.get("SYMBOLS"))
-START_DAY = os.environ.get("START_DAY")
-TOP = int(os.environ.get("TOP"))
-SLACK = os.environ.get("SLACK")
-MP_NUM = int(os.environ.get("MP_NUM"))
-KOR = bool(int(os.environ.get("KOR")))
+SYMBOLS = os.environ.get("SYMBOLS")
+if "," in SYMBOLS:
+    SYMBOLS = SYMBOLS.split(",")
+else:
+    SYMBOLS = int(SYMBOLS)
+START_DAY = os.environ.get("START_DAY", "20220101")
+TOP = int(os.environ.get("TOP", 2))
+DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
+DISCORD_BOT_CHANNEL = os.environ.get("DISCORD_BOT_CHANNEL")
+MP_NUM = int(os.environ.get("MP_NUM", 0))
+KOR = bool(int(os.environ.get("KOR", 1)))
 
 
-def main(channel, test_code):
+def main(test_code):
     now = datetime.now()
-    test_start_day = now - timedelta(days=30)
-    test_data = fdr.DataReader(test_code, test_start_day)
-    if KOR and test_data.index[-1].day != now.day:
-        return False
-    qsb = zz.quant.QuantSlackBotFDR(
+    qbf = zz.quant.QuantBotFDR(
         SYMBOLS,
         start_day=START_DAY,
         ohlc="Close",
         top=TOP,
-        token=SLACK,
-        channel=channel,
-        name="Buy",
-        icon_emoji="chart_with_upwards_trend",
+        token=DISCORD_BOT_TOKEN,
+        channel=DISCORD_BOT_CHANNEL,
         mp_num=MP_NUM,
         analysis=True,
         kor=KOR,
     )
-    qsb.buy()
-    # if KOR:
-    #     qsb = zz.quant.QuantSlackBotFDR(
-    #         ["069500"],
-    #         # ["069500", "226980", "114800", "251340", "252670"],
-    #         start_day=START_DAY,
-    #         ohlc="Close",
-    #         top=TOP,
-    #         token=SLACK,
-    #         channel=channel,
-    #         name="Index",
-    #         icon_emoji="chart_with_upwards_trend",
-    #         mp_num=MP_NUM,
-    #         kor=KOR,
-    #     )
-    #     qsb.index()
+    _, test_data = qbf._get_data(test_code)
+    print(test_data)
+    if KOR and test_data.index[-1].day != now.day:
+        return False
+    qbf.buy()
     return True
 
 
 if __name__ == "__main__":
     if KOR:
-        channel = "stock_kor_buy"
         code = "005930"
     else:
-        channel = "stock_ovs_buy"
         code = "AAPL"
-    slack = zz.api.SlackBot(SLACK, channel, name="Error", icon_emoji="warning")
+    discord = zz.api.DiscordBot(DISCORD_BOT_TOKEN, DISCORD_BOT_CHANNEL)
     try:
         zz.plot.font(kor=True)
-        if not main(channel, code):
-            system = zz.api.SlackBot(SLACK, channel, name="System", icon_emoji="bank")
-            system.message("> :zzz: 오늘은 휴장일 입니다. :zzz:")
-    except Exception as e:
-        response = slack.message(
+        if not main(code):
+            discord.message("> :zzz: 오늘은 휴장일 입니다. :zzz:")
+    except Exception as exc:
+        exc_str = str(exc)
+        response = discord.message(
             ":warning:" * 3
             + "\tERROR!!!\t"
             + ":warning:" * 3
             + "\n"
             + "```\n"
-            + str(e)
+            + exc_str
             + "\n```",
         )
-        slack.message(traceback.format_exc(), True, response.get("ts"))
+        thread_id = discord.get_thread_id(response, name=exc_str)
+        discord.message(traceback.format_exc(), "python", thread_id)

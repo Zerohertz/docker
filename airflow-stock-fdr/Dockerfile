@@ -7,6 +7,6 @@ LABEL license="MIT"
 WORKDIR /app
 COPY main.py .
 
-RUN pip install --no-cache-dir zerohertzLib[quant]==1.2.3
+RUN pip install --no-cache-dir zerohertzLib[quant]==1.2.6
 
 CMD ["python3", "main.py"]

@@ -15,6 +15,7 @@ DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 DISCORD_BOT_CHANNEL = os.environ.get("DISCORD_BOT_CHANNEL")
 MP_NUM = int(os.environ.get("MP_NUM", 0))
 KOR = bool(int(os.environ.get("KOR", 1)))
+MODE = os.environ.get("MODE", "All")
 
 
 def main(test_code):
@@ -34,7 +35,10 @@ def main(test_code):
     print(test_data)
     if KOR and test_data.index[-1].day != now.day:
         return False
-    qbf.buy()
+    if MODE == "All":
+        qbf.index()
+    elif MODE == "Buy":
+        qbf.buy()
     return True
 
 
