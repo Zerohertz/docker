@@ -4,7 +4,11 @@ from datetime import datetime
 
 import zerohertzLib as zz
 
-SYMBOLS = int(os.environ.get("SYMBOLS"))
+SYMBOLS = os.environ.get("SYMBOLS")
+if "," in SYMBOLS:
+    SYMBOLS = SYMBOLS.split(",")
+else:
+    SYMBOLS = int(SYMBOLS)
 START_DAY = os.environ.get("START_DAY", "20220101")
 TOP = int(os.environ.get("TOP", 2))
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
