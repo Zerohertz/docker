@@ -32,7 +32,6 @@ def main(test_code):
         kor=KOR,
     )
     _, test_data = qbf._get_data(test_code)
-    print(test_data)
     if KOR and test_data.index[-1].day != now.day:
         return False
     if MODE == "All":
