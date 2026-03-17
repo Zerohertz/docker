@@ -115,7 +115,7 @@ RUN uv pip install --no-cache-dir neovim pylatexenc && \
     nvim --headless +TSUpdateSync '+sleep 20' +qa && exit"
 
 # ----------------------- zerohertzLib ----------------------- #
-RUN uv pip install --no-cache-dir zerohertzLib[all]==1.2.3
+RUN uv pip install --no-cache-dir zerohertzLib[all]==1.2.8
 
 WORKDIR /workspace
 ENTRYPOINT [ "zsh", "-c" ]
