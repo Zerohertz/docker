@@ -6,8 +6,11 @@ LABEL license="MIT"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# ----------------------- APT (Base, Neovim) Install + System (locale, timezone) Setup ----------------------- #
 RUN apt-get update && \
-    apt-get install -y locales curl wget unzip git gnupg software-properties-common eza tmux neofetch autojump bat git-delta && \
+    apt-get install -y \
+    locales curl wget unzip git gnupg software-properties-common eza tmux neofetch autojump bat git-delta \
+    ripgrep fd-find fzf fish luarocks && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 && \
@@ -16,25 +19,15 @@ RUN apt-get update && \
     ln -s /usr/bin/batcat /usr/bin/bat && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
+# ----------------------- CUDA Keyring + APT (C/C++, Go) Install ----------------------- #
 RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb && \
     dpkg -i cuda-keyring_1.1-1_all.deb && \
     rm -f cuda-keyring_1.1-1_all.deb /etc/apt/sources.list.d/cuda.list && \
-    apt-get update
-
-# ----------------------- C++ ----------------------- #
-RUN apt-get update && \
-    apt-get install -y build-essential gcc clang clangd cmake && \
+    apt-get update && \
+    apt-get install -y \
+    build-essential gcc clang clangd cmake \
+    golang && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# ----------------------- Go ----------------------- #
-RUN apt-get update && \
-    apt-get install -y golang && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# ----------------------- Java ----------------------- #
-# RUN apt-get update && \
-#     apt-get install -y openjdk-17-jdk openjdk-21-jdk && \
-#     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------- Node ----------------------- #
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
@@ -54,38 +47,11 @@ ENV PATH="/opt/venv/main/bin:$PATH" \
 RUN uv python install 3.12 && \
     uv venv /opt/venv/main --python 3.12 --prompt "main" --seed --color always
 
-# ----------------------- Terraform ----------------------- #
-RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
-    gpg --dearmor | \
-    tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null && \
-    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
-    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-    tee /etc/apt/sources.list.d/hashicorp.list && \
-    apt-get update && \
-    apt-get install -y packer terraform && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# ----------------------- Neovim ----------------------- #
-COPY mason.sh /root/mason.sh
-RUN wget https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz && \
-    tar -xzf nvim-linux-x86_64.tar.gz && \
-    cp -r nvim-linux-x86_64/* /usr/local/ && \
-    rm nvim-linux-x86_64.tar.gz && rm -rf nvim-linux-x86_64 && \
-    apt-get update && \
-    apt-get install -y ripgrep fd-find fzf fish luarocks && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    chmod +x /root/mason.sh
-
-# ----------------------- Lazygit ----------------------- #
+# ----------------------- LazyGit ----------------------- #
 RUN LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*') && \
     curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" && \
     tar xf lazygit.tar.gz lazygit && \
     install lazygit /usr/local/bin && rm lazygit*
-
-# ----------------------- Local Test ----------------------- #
-# RUN sed -i 's|archive.ubuntu.com|mirror.kakao.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
-#     sed -i 's|security.ubuntu.com|mirror.kakao.com|g' /etc/apt/sources.list.d/ubuntu.sources && \
-#     apt-get update
 
 # ----------------------- ZSH ----------------------- #
 RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/dotfiles/main/linux/zsh.sh | bash && \
@@ -100,18 +66,14 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     zsh -c "source $HOME/.cargo/env && \
     rustup update && rustup component add rust-analyzer && exit"
 
-# ----------------------- Java ----------------------- #
-# RUN curl -fsSL https://get.sdkman.io | bash && \
-#     zsh -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
-#     sdk install gradle && sdk install springboot && exit"
-
 # ----------------------- Neovim ----------------------- #
-RUN uv pip install --no-cache-dir neovim pylatexenc && \
+RUN curl -fsSL https://raw.githubusercontent.com/Zerohertz/nvim/refs/heads/main/scripts/install.sh | bash && \
+    uv pip install --no-cache-dir neovim pylatexenc && \
     export NVM_DIR="$HOME/.nvm" && \
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
     zsh -c "source $HOME/.zshrc && \
     nvim --headless +qa && \
-    $HOME/mason.sh && rm $HOME/mason.sh && \
+    curl -fsSL https://raw.githubusercontent.com/Zerohertz/nvim/refs/heads/main/scripts/mason.sh | zsh && \
     nvim --headless +TSUpdateSync '+sleep 20' +qa && exit"
 
 # ----------------------- zerohertzLib ----------------------- #
